@@ -1,4 +1,4 @@
-from .combine import State
+from .combine import State, ObservedObject
 from .component import Component
 
 
@@ -25,5 +25,7 @@ class View:
             super(View, self).__setattr__(key, value)
             self.bot.loop.create_task(self.update())
             return
+        if isinstance(value, ObservedObject):
+            value.view = self
 
         super(View, self).__setattr__(key, value)

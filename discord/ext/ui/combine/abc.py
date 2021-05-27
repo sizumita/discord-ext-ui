@@ -23,10 +23,10 @@ class ValueAble:
     def __int__(self) -> int:
         return self.value.__int__()
 
-    def __repr__(self) -> Any:
+    def __repr__(self) -> str:
         return self.value.__repr__()
 
-    def __str__(self) -> Any:
+    def __str__(self) -> str:
         return self.value.__str__()
 
     def __eq__(self, other: Any) -> bool:

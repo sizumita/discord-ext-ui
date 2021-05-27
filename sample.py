@@ -1,14 +1,14 @@
-from discord.ext.ui import State, Component, Button, View
+from discord.ext.ui import State, Component, Button, View, ObservedObject, Published
 import discord
 import os
 
 client = discord.Client()
 
 
-class SampleView(View):
+class SampleViewModel(ObservedObject):
     def __init__(self):
         super().__init__()
-        self.num = State(0)
+        self.num = Published(0)
 
     def countup(self):
         self.num += 1
@@ -16,15 +16,21 @@ class SampleView(View):
     def countdown(self):
         self.num -= 1
 
+
+class SampleView(View):
+    def __init__(self):
+        super().__init__()
+        self.viewModel = SampleViewModel()
+
     async def body(self):
         return Component(
-            f"test! {self.num}",
+            f"test! {self.viewModel.num}",
             buttons=[
                 Button("+1")
-                .on_click(lambda x: self.countup())
+                .on_click(lambda x: self.viewModel.countup())
                 .style(discord.ButtonStyle.blurple),
                 Button("-1")
-                .on_click(lambda x: self.countdown())
+                .on_click(lambda x: self.viewModel.countdown())
                 .style(discord.ButtonStyle.blurple)
             ]
         )

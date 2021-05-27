@@ -99,8 +99,3 @@ class Button(Item):
     def emoji(self, emoji: Union[str, PartialEmoji]) -> 'Button':
         self._emoji = emoji
         return self
-
-
-class URLButton(Button):
-    def on_click(self, func: callable):
-        raise NotImplemented
