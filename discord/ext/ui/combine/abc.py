@@ -100,3 +100,21 @@ class ValueAble:
 
     def __abs__(self) -> Any:
         return self.value.__abs__()
+
+    def __setattr__(self, key, value):
+        return self.value.__setattr__(key, value)
+
+    def __getattribute__(self, item):
+        return self.value.__getattribute__(item)
+
+    def __getattr__(self, item):
+        return self.value.__getattr__(item)
+
+    def __index__(self):
+        return self.value.__index__()
+
+    def __len__(self):
+        return self.value.__len__()
+
+    def __hex__(self):
+        return self.value.__hex__()
