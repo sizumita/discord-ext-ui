@@ -33,6 +33,6 @@ setup(name='discord-ext-ui',
       packages=['discord.ext.ui'],
       license='MIT',
       description='An Declarative UI Kit for discord.py',
-      install_requires=['discord.py>=2.0.0'],
+      install_requires=[],
       python_requires='>=3.8.2'
       )
