@@ -22,16 +22,28 @@ class SampleView(View):
         super().__init__()
         self.viewModel = SampleViewModel()
 
+    async def delete(self, interaction: discord.Interaction):
+        await interaction.message.delete()
+        self.stop()
+
     async def body(self):
         return Component(
             f"test! {self.viewModel.num}",
             buttons=[
-                Button("+1")
-                .on_click(lambda x: self.viewModel.countup())
-                .style(discord.ButtonStyle.blurple),
-                Button("-1")
-                .on_click(lambda x: self.viewModel.countdown())
-                .style(discord.ButtonStyle.blurple)
+                [
+                    Button("+1")
+                    .on_click(lambda x: self.viewModel.countup())
+                    .style(discord.ButtonStyle.blurple),
+
+                    Button("-1")
+                    .on_click(lambda x: self.viewModel.countdown())
+                    .style(discord.ButtonStyle.blurple)
+                ],
+                [
+                    Button("終わる")
+                    .on_click(self.delete)
+                    .style(discord.ButtonStyle.danger)
+                ]
             ]
         )
 

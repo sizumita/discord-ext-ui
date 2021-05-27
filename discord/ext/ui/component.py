@@ -19,13 +19,13 @@ class Component:
 
     def make_view(self) -> ui.View:
         view = ui.View()
-        i = 0
+        i = 1
         for button in self.buttons:
             if not isinstance(button, list):
                 view.add_item(button.to_discord_button())
                 continue
             for button_ in button:  # type: Button
-                button_.group = i
+                button_._group = i
                 view.add_item(button_.to_discord_button())
             i += 1
         return view
