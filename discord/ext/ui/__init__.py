@@ -3,5 +3,7 @@ from .combine import ObservedObject, Published, State
 from .button import Button
 from .view import View
 from .component import Component
+from .message import Message
+from .utils import async_interaction_partial, interaction_partial
 
 __version__ = "0.1.0"

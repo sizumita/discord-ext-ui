@@ -1,4 +1,4 @@
-from discord.ext.ui import State, Component, Button, View, ObservedObject, Published
+from discord.ext.ui import Component, Button, View, ObservedObject, Published, Message
 import discord
 import os
 
@@ -26,26 +26,31 @@ class SampleView(View):
         await interaction.message.delete()
         self.stop()
 
-    async def body(self):
-        return Component(
-            f"test! {self.viewModel.num}",
-            buttons=[
-                [
-                    Button("+1")
-                    .on_click(lambda x: self.viewModel.countup())
-                    .style(discord.ButtonStyle.blurple),
+    async def add_reaction(self):
+        await self.discord_message.add_reaction("\U0001f44d")
 
-                    Button("-1")
-                    .on_click(lambda x: self.viewModel.countdown())
-                    .style(discord.ButtonStyle.blurple)
-                ],
-                [
-                    Button("終わる")
-                    .on_click(self.delete)
-                    .style(discord.ButtonStyle.danger)
+    async def body(self):
+        return Message(
+            content=f"test! {self.viewModel.num}",
+            component=Component(
+                buttons=[
+                    [
+                        Button("+1")
+                        .on_click(lambda x: self.viewModel.countup())
+                        .style(discord.ButtonStyle.blurple),
+
+                        Button("-1")
+                        .on_click(lambda x: self.viewModel.countdown())
+                        .style(discord.ButtonStyle.blurple)
+                    ],
+                    [
+                        Button("終わる")
+                        .on_click(self.delete)
+                        .style(discord.ButtonStyle.danger)
+                    ]
                 ]
-            ]
-        )
+            )
+        ).on_appear(self.add_reaction)
 
 
 @client.event

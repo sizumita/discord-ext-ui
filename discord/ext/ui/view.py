@@ -1,7 +1,7 @@
 from typing import Optional
 
 from .combine import State, ObservedObject
-from .component import Component
+from .message import Message
 
 from discord import ui
 
@@ -11,21 +11,27 @@ class View:
         self._watch_variables = []
         self.bot = None
         self.message = None
+        self.discord_message = None
         self.view: Optional[ui.View] = None
 
-    async def body(self):
-        return Component()
+    async def body(self) -> Message:
+        return Message()
 
     async def start(self, bot, channel):
         self.bot = bot
-        self.view, self.message = await (await self.body()).send(channel)
+        self.message = await self.body()
+        self.view, self.discord_message = await self.message.send(channel)
+        await self.message.appear()
 
     def stop(self):
+        await self.message.disappear()
         if self.view is not None:
             self.view.stop()
 
     async def update(self):
-        self.view = await (await self.body()).update(self.message)
+        v = await self.message.update(self.view, self.discord_message, (await self.body()))
+        if v is not None:
+            self.view = v
 
     def __setattr__(self, key, value):
         if key == "_watch_variables":

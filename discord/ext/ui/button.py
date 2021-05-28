@@ -1,4 +1,3 @@
-import asyncio
 from typing import Optional, Union
 
 import discord
@@ -6,12 +5,7 @@ from discord import ui
 from discord import ButtonStyle, PartialEmoji
 
 from .item import Item
-
-
-async def _call_any(func, *args, **kwargs):
-    if asyncio.iscoroutinefunction(func):
-        return await func(*args, **kwargs)
-    return func(*args, **kwargs)
+from .utils import _call_any
 
 
 class CustomButton(ui.Button):
@@ -64,6 +58,9 @@ class Button(Item):
 
         self.func = None
 
+    def __eq__(self, other: 'Button'):
+        return self.to_dict() == other.to_dict()
+
     def to_discord_button(self):
         return CustomButton(
             label=self._label,
@@ -74,6 +71,16 @@ class Button(Item):
             group=self._group,
             callback=self.func
         )
+
+    def to_dict(self):
+        return {
+            'style': self._style,
+            'label': self._label,
+            'disabled': self._disabled,
+            'emoji': self._emoji,
+            'group': self._group,
+            'callback': id(self.func)
+        }
 
     def on_click(self, func: callable) -> 'Button':
         self.func = func
