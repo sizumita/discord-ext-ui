@@ -23,7 +23,7 @@ class View:
         self.view, self.discord_message = await self.message.send(channel)
         await self.message.appear()
 
-    def stop(self):
+    async def stop(self):
         await self.message.disappear()
         if self.view is not None:
             self.view.stop()

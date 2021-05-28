@@ -24,7 +24,7 @@ class SampleView(View):
 
     async def delete(self, interaction: discord.Interaction):
         await interaction.message.delete()
-        self.stop()
+        await self.stop()
 
     async def add_reaction(self):
         await self.discord_message.add_reaction("\U0001f44d")
