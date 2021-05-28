@@ -1,8 +1,9 @@
-from discord.ext.ui import Component, Button, View, ObservedObject, Published, Message, Select, SelectOption
+from discord.ext.ui import Component, Button, View, ObservedObject, Published, Message
+from discord.ext import commands
 import discord
 import os
 
-client = discord.Client()
+client = commands.Bot("!")
 
 
 class SampleViewModel(ObservedObject):
@@ -28,6 +29,11 @@ class SampleView(View):
 
     async def add_reaction(self):
         await self.discord_message.add_reaction("\U0001f44d")
+
+    @View.listen(name="on_reaction_add")
+    async def watch_reaction_add(self, reaction: discord.Reaction, user: discord.User):
+        if reaction.message == self.discord_message and str(reaction.emoji) == "\U0001f44d":
+            self.viewModel.countup()
 
     async def body(self):
         return Message(

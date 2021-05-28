@@ -4,6 +4,7 @@ from .combine import State, ObservedObject
 from .message import Message
 
 from discord import ui
+from discord.ext import commands
 
 
 class View:
@@ -13,6 +14,27 @@ class View:
         self.message = None
         self.discord_message = None
         self.view: Optional[ui.View] = None
+        self.listeners = []
+
+    def add_listener(self, func, name=None):
+        if not isinstance(self.bot, commands.Bot):
+            raise ValueError("bot must be commands.Bot")
+
+        self.bot.add_listener(func, name)
+
+    def remove_listener(self, func, name=None):
+        if not isinstance(self.bot, commands.Bot):
+            raise ValueError("bot must be commands.Bot")
+
+        self.bot.remove_listener(func, name)
+
+    @staticmethod
+    def listen(name=None):
+        def decorator(func):
+            func.__listener__ = True
+            func.__listener_name__ = name or func.__name__
+            return func
+        return decorator
 
     async def body(self) -> Message:
         return Message()
@@ -22,8 +44,16 @@ class View:
         self.message = await self.body()
         self.view, self.discord_message = await self.message.send(channel)
         await self.message.appear()
+        for name in dir(self):
+            member = getattr(self, name, None)
+            if hasattr(member, "__listener__"):
+                self.add_listener(member, getattr(member, "__listener_name__", None))
+                self.listeners.append(member)
 
     async def stop(self):
+        for listener in self.listeners:
+            self.remove_listener(listener, getattr(listener, "__listener_name__", None))
+
         await self.message.disappear()
         if self.view is not None:
             self.view.stop()
