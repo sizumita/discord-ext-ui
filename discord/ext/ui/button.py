@@ -46,7 +46,6 @@ class Button(Item):
             disabled: bool = False,
             url: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
-            group: Optional[int] = None,
     ):
         self._style = style
         self._label = label
@@ -54,14 +53,14 @@ class Button(Item):
         self._url = url
         self._emoji = emoji
 
-        self._group = group
+        self._group = None
 
         self.func = None
 
     def __eq__(self, other: 'Button'):
         return self.to_dict() == other.to_dict()
 
-    def to_discord_button(self):
+    def to_discord(self):
         return CustomButton(
             label=self._label,
             style=self._style,

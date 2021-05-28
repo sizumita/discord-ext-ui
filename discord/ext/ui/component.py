@@ -2,25 +2,25 @@ from typing import Optional, List, Union
 
 from discord import ui
 
-from .button import Button
+from .item import Item
 
 
 class Component:
-    def __init__(self, buttons: Optional[List[Union[Button, List[Button]]]] = None) -> None:
-        self.buttons = buttons
+    def __init__(self, items: Optional[List[Union[Item, List[Item]]]] = None) -> None:
+        self.items = items
 
     def __eq__(self, other: 'Component'):
-        return self.buttons == other.buttons
+        return self.items == other.items
 
     def make_view(self) -> ui.View:
         view = ui.View(None)
         i = 0
-        for button in self.buttons:
-            if not isinstance(button, list):
-                view.add_item(button.to_discord_button())
+        for item in self.items:
+            if not isinstance(item, list):
+                view.add_item(item.to_discord())
                 continue
-            for button_ in button:  # type: Button
-                button_._group = i
-                view.add_item(button_.to_discord_button())
+            for item_ in item:  # type: Item
+                item_._group = i
+                view.add_item(item_.to_discord())
             i += 1
         return view

@@ -1,2 +1,3 @@
 class Item:
-    pass
+    def to_discord(self):
+        pass

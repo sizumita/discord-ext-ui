@@ -29,7 +29,7 @@ class View:
             self.view.stop()
 
     async def update(self):
-        v = await self.message.update(self.view, self.discord_message, (await self.body()))
+        v = await self.message.update(self.discord_message, (await self.body()))
         if v is not None:
             self.view = v
 

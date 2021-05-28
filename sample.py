@@ -1,4 +1,4 @@
-from discord.ext.ui import Component, Button, View, ObservedObject, Published, Message
+from discord.ext.ui import Component, Button, View, ObservedObject, Published, Message, Select, SelectOption
 import discord
 import os
 
@@ -32,24 +32,22 @@ class SampleView(View):
     async def body(self):
         return Message(
             content=f"test! {self.viewModel.num}",
-            component=Component(
-                buttons=[
-                    [
-                        Button("+1")
+            component=Component(items=[
+                [
+                    Button("+1")
                         .on_click(lambda x: self.viewModel.countup())
                         .style(discord.ButtonStyle.blurple),
 
-                        Button("-1")
+                    Button("-1")
                         .on_click(lambda x: self.viewModel.countdown())
                         .style(discord.ButtonStyle.blurple)
-                    ],
-                    [
-                        Button("終わる")
+                ],
+                [
+                    Button("終わる")
                         .on_click(self.delete)
                         .style(discord.ButtonStyle.danger)
-                    ]
                 ]
-            )
+            ])
         ).on_appear(self.add_reaction)
 
 

@@ -5,5 +5,8 @@ from .view import View
 from .component import Component
 from .message import Message
 from .utils import async_interaction_partial, interaction_partial
+from .select import Select
+from .select_option import SelectOption
 
-__version__ = "0.1.0"
+
+__version__ = "0.2.0"
