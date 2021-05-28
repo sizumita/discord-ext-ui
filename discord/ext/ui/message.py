@@ -27,10 +27,10 @@ class Message:
         if self.content != other.content:
             kwargs['content'] = other.content
             self.content = other.content
-        if self.embed == other.embed:
+        if self.embed != other.embed:
             kwargs['embed'] = other.embed
             self.embed = other.embed
-        if self.component == other.component:
+        if self.component != other.component:
             kwargs['view'] = other.component.make_view()
             self.component = other.component
         if not kwargs:
