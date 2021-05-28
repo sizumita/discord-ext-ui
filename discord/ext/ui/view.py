@@ -8,6 +8,7 @@ from discord import ui
 
 class View:
     def __init__(self):
+        self._watch_variables = []
         self.bot = None
         self.message = None
         self.view: Optional[ui.View] = None
@@ -27,13 +28,24 @@ class View:
         self.view = await (await self.body()).update(self.message)
 
     def __setattr__(self, key, value):
-        if isinstance(getattr(self, key, None), State):
-            if not isinstance(value, State):
-                value = State(value)
-            super(View, self).__setattr__(key, value)
-            self.bot.loop.create_task(self.update())
+        if key == "_watch_variables":
+            object.__setattr__(self, key, value)
             return
+
         if isinstance(value, ObservedObject):
             value.view = self
 
-        super(View, self).__setattr__(key, value)
+        if not hasattr(self, key):
+            if isinstance(value, State):
+                self._watch_variables.append(key)
+                object.__setattr__(self, key, value.value)
+                return
+        if isinstance(value, State):
+            value = value.value
+
+        if key in self._watch_variables:
+            object.__setattr__(self, key, value)
+            self.bot.loop.create_task(self.update())
+            return
+
+        object.__setattr__(self, key, value)
