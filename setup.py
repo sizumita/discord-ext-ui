@@ -26,13 +26,33 @@ if version.endswith(('a', 'b', 'rc')):
     except Exception:
         pass
 
+readme = ''
+with open('README.rst') as f:
+    readme = f.read()
+
+
 setup(name='discord-ext-ui',
       author='sizumita',
       url='https://github.com/sizumita/discord-ext-ui',
       version=version,
+      long_description=readme,
+      long_description_content_type="text/x-rst",
       packages=['discord.ext.ui', 'discord.ext.ui.combine'],
       license='MIT',
       description='An Declarative UI Kit for discord.py',
       install_requires=[],
-      python_requires='>=3.8.2'
+      python_requires='>=3.8.2',
+      classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'License :: OSI Approved :: MIT License',
+        'Intended Audience :: Developers',
+        'Natural Language :: Japanese',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Topic :: Internet',
+        'Topic :: Software Development :: Libraries',
+        'Topic :: Software Development :: Libraries :: Python Modules',
+        'Topic :: Utilities',
+        ]
       )
