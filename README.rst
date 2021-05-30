@@ -26,6 +26,7 @@ Example
 =======
 
 .. code-block:: python
+
     from discord.ext.ui import Component, Button, View, ObservedObject, Published, Message
     from discord.ext import commands
     import discord
