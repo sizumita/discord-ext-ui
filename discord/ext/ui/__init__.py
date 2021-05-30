@@ -9,4 +9,4 @@ from .select import Select
 from .select_option import SelectOption
 
 
-__version__ = "1.0.2"
+__version__ = "1.1.0a"

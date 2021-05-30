@@ -12,16 +12,16 @@ class SelectOption:
             description: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
             default: bool = False,
-    ):
-        self._label = label
-        self._value = label if value is None else value
-        self._description = description
+    ) -> None:
+        self._label: str = label
+        self._value: Optional[str] = label if value is None else value
+        self._description: Optional[str] = description
 
         if isinstance(emoji, str):
             emoji = PartialEmoji.from_str(emoji)
 
-        self._emoji = emoji
-        self._default = default
+        self._emoji: Optional[str] = emoji
+        self._default: bool = default
 
     def label(self, label: str) -> 'SelectOption':
         self._label = label
@@ -46,7 +46,7 @@ class SelectOption:
         self._default = default
         return self
 
-    def to_discord_select_option(self):
+    def to_discord_select_option(self) -> discord.SelectOption:
         return discord.SelectOption(
             label=self._label,
             value=self._value,

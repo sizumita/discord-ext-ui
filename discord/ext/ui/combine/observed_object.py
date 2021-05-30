@@ -1,12 +1,15 @@
-from typing import Any
+from typing import Any, List, Optional, TYPE_CHECKING
 
 from .published import Published
+
+if TYPE_CHECKING:
+    from ..view import View
 
 
 class ObservedObject:
     def __init__(self) -> None:
-        self._watch_variables = []
-        self.view = None
+        self._watch_variables: List[str] = []
+        self.view: Optional['View'] = None
 
     def __setattr__(self, key: str, value: Any) -> None:
         if key == "_watch_variables":
@@ -23,7 +26,9 @@ class ObservedObject:
 
         if key in self._watch_variables:
             object.__setattr__(self, key, value)
-            self.view.bot.loop.create_task(self.view.update())
+            if self.view is not None:
+                if self.view.bot is not None:
+                    self.view.bot.loop.create_task(self.view.update())
             return
 
         return object.__setattr__(self, key, value)

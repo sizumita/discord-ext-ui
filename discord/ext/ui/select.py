@@ -17,12 +17,12 @@ class Select(Item):
             min_values: int = 1,
             max_values: int = 1,
             options: Optional[list] = None
-    ):
-        self._placeholder = placeholder
-        self._min_values = min_values
-        self._max_values = max_values
-        self._options = [] if options is None else options
-        self._row = None
+    ) -> None:
+        self._placeholder: Optional[str] = placeholder
+        self._min_values: int = min_values
+        self._max_values: int = max_values
+        self._options: list = [] if options is None else options
+        self._row: Optional[int] = None
 
     def placeholder(self, placeholder: str) -> 'Select':
         self._placeholder = placeholder
@@ -36,15 +36,15 @@ class Select(Item):
         self._max_values = max_values
         return self
 
-    def options(self, options: List[SelectOption]):
+    def options(self, options: List[SelectOption]) -> 'Select':
         self._options = options
         return self
 
-    def row(self, row: int):
+    def row(self, row: int) -> 'Select':
         self._row = row
         return self
 
-    def to_discord(self):
+    def to_discord(self) -> CustomSelect:
         return CustomSelect(
             placeholder=self._placeholder,
             min_values=self._min_values,
