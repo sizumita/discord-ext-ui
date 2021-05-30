@@ -27,8 +27,8 @@ class ObservedObject:
         if key in self._watch_variables:
             object.__setattr__(self, key, value)
             if self.view is not None:
-                if self.view.bot is not None:
-                    self.view.bot.loop.create_task(self.view.update())
+                if self.view.client is not None:
+                    self.view.client.loop.create_task(self.view.update())
             return
 
         return object.__setattr__(self, key, value)

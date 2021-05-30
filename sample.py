@@ -3,7 +3,7 @@ from discord.ext import commands
 import discord
 import os
 
-client = commands.Bot("!")
+bot = commands.Bot("!")
 
 
 class SampleViewModel(ObservedObject):
@@ -19,8 +19,8 @@ class SampleViewModel(ObservedObject):
 
 
 class SampleView(View):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, client):
+        super().__init__(client)
         self.viewModel = SampleViewModel()
 
     async def delete(self, interaction: discord.Interaction):
@@ -57,11 +57,11 @@ class SampleView(View):
         ).on_appear(self.add_reaction)
 
 
-@client.event
+@bot.event
 async def on_message(message):
     if message.content != "!test":
         return
-    await SampleView().start(client, message.channel)
+    await SampleView(bot).start(message.channel)
 
 
-client.run(os.environ["DISCORD_BOT_TOKEN"])
+bot.run(os.environ["DISCORD_BOT_TOKEN"])

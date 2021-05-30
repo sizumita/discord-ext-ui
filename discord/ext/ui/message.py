@@ -25,7 +25,7 @@ class Message:
         view = self.component.make_view()
         return view, await channel.send(content=self.content, embed=self.embed, view=view)
 
-    async def update(self, message: discord.Message, other: 'Message') -> Optional[ui.View]:
+    async def update(self, other: 'Message') -> dict:
         kwargs = {}
         if self.content != other.content:
             kwargs['content'] = other.content
@@ -36,11 +36,8 @@ class Message:
         if self.component != other.component:
             kwargs['view'] = other.component.make_view() if other.component is not None else None
             self.component = other.component
-        if not kwargs:
-            return None
 
-        await message.edit(**kwargs)
-        return kwargs.get('view', None)
+        return kwargs
 
     def on_appear(self, func: Callable) -> 'Message':
         self.appear_func = func
