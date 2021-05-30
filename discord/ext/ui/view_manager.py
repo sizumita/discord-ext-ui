@@ -1,4 +1,5 @@
 from typing import Optional
+import asyncio
 
 import discord
 from discord import ui
@@ -12,6 +13,7 @@ class ViewManager:
         self.discord_message: Optional[discord.Message] = None
         self.view: Optional[ui.View] = None
         self.started: bool = False
+        self.update_lock: asyncio.Lock = asyncio.Lock()
 
     def raise_for_started(self):
         if not self.started:
@@ -27,8 +29,9 @@ class ViewManager:
 
     async def update(self, message: Message):
         self.raise_for_started()
-        kwargs = await self.message.update(message)
-        await self.render(**kwargs)
+        async with self.update_lock:
+            kwargs = await self.message.update(message)
+            await self.render(**kwargs)
 
     async def render(self, **kwargs):
         await self.discord_message.edit(**kwargs)
