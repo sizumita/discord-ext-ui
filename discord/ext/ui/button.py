@@ -18,7 +18,7 @@ class CustomButton(ui.Button):
             custom_id: Optional[str] = None,
             url: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
-            group: Optional[int] = None,
+            row: Optional[int] = None,
             callback: Optional[callable] = None
     ):
         super(CustomButton, self).__init__(
@@ -28,7 +28,7 @@ class CustomButton(ui.Button):
             custom_id=custom_id,
             url=url,
             emoji=emoji,
-            group=group
+            row=row
         )
         self.callback_func = callback
 
@@ -53,7 +53,7 @@ class Button(Item):
         self._url = url
         self._emoji = emoji
 
-        self._group = None
+        self._row = None
 
         self.func = None
 
@@ -61,15 +61,8 @@ class Button(Item):
         return self.to_dict() == other.to_dict()
 
     def to_discord(self):
-        return CustomButton(
-            label=self._label,
-            style=self._style,
-            disabled=self._disabled,
-            url=self._url,
-            emoji=self._emoji,
-            group=self._group,
-            callback=self.func
-        )
+        return CustomButton(style=self._style, label=self._label, disabled=self._disabled, url=self._url,
+                            emoji=self._emoji, row=self._row, callback=self.func)
 
     def to_dict(self):
         return {
@@ -77,7 +70,7 @@ class Button(Item):
             'label': self._label,
             'disabled': self._disabled,
             'emoji': self._emoji,
-            'group': self._group,
+            'row': self._row,
             'callback': id(self.func)
         }
 

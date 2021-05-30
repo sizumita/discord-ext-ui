@@ -20,7 +20,7 @@ class Component:
                 view.add_item(item.to_discord())
                 continue
             for item_ in item:  # type: Item
-                item_._group = i
+                item_._row = i
                 view.add_item(item_.to_discord())
             i += 1
         return view

@@ -22,7 +22,7 @@ class Select(Item):
         self._min_values = min_values
         self._max_values = max_values
         self._options = [] if options is None else options
-        self._group = None
+        self._row = None
 
     def placeholder(self, placeholder: str) -> 'Select':
         self._placeholder = placeholder
@@ -40,11 +40,15 @@ class Select(Item):
         self._options = options
         return self
 
+    def row(self, row: int):
+        self._row = row
+        return self
+
     def to_discord(self):
         return CustomSelect(
             placeholder=self._placeholder,
             min_values=self._min_values,
             max_values=self._max_values,
             options=[o.to_discord_select_option() for o in self._options],
-            group=self._group
+            group=self._row
         )
