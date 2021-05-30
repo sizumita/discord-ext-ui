@@ -28,7 +28,7 @@ class SampleView(View):
         await self.stop()
 
     async def add_reaction(self):
-        await self.discord_message.add_reaction("\U0001f44d")
+        await self.get_message().add_reaction("\U0001f44d")
 
     @View.listen(name="on_reaction_add")
     async def watch_reaction_add(self, reaction: discord.Reaction, user: discord.User):

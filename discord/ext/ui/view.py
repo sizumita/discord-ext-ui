@@ -45,8 +45,8 @@ class View:
 
     def get_message(self) -> discord.Message:
         """
-        Returns message
-        :return:
+        Returns message that this View is attended
+        :return: discord.Message
         """
         return self.manager.discord_message
 
