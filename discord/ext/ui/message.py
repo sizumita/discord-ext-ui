@@ -11,9 +11,10 @@ class Message:
     def __init__(self,
                  content: Optional[str] = None,
                  embed: Optional[discord.Embed] = None,
+                 file: Optional[discord.File] = None,
                  component: Optional[Component] = None) -> None:
         self.content: Optional[str] = content
-        self.file: Optional[discord.File] = None
+        self.file: Optional[discord.File] = file
         self.embed: Optional[discord.Embed] = embed
         self.component: Optional[Component] = component
         self.appear_func: Optional[Callable] = None
@@ -49,7 +50,10 @@ class Message:
         if other.file is None:
             kwargs['file'] = None
             self.file = None
-        elif self.file.fp.read() != other.file.fp.read():
+        elif self.file is None and other.file is not None:
+            kwargs['file'] = other.file
+            self.file = other.file
+        elif self.file is not None and self.file.fp.read() != other.file.fp.read():
             other.file.reset()
             self.file.reset()
             kwargs['file'] = other.file
