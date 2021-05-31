@@ -13,6 +13,7 @@ class Message:
                  embed: Optional[discord.Embed] = None,
                  component: Optional[Component] = None) -> None:
         self.content: Optional[str] = content
+        self.file: Optional[discord.File] = None
         self.embed: Optional[discord.Embed] = embed
         self.component: Optional[Component] = component
         self.appear_func: Optional[Callable] = None
@@ -30,12 +31,29 @@ class Message:
         if self.content != other.content:
             kwargs['content'] = other.content
             self.content = other.content
-        if self.embed != other.embed:
+
+        if other.embed is None:
+            kwargs['embed'] = None
+            self.embed = None
+        elif self.embed != other.embed:
             kwargs['embed'] = other.embed
             self.embed = other.embed
-        if self.component != other.component:
+
+        if other.component is None:
+            kwargs['view'] = None
+            self.component = None
+        elif self.component != other.component:
             kwargs['view'] = other.component.make_view() if other.component is not None else None
             self.component = other.component
+
+        if other.file is None:
+            kwargs['file'] = None
+            self.file = None
+        elif self.file.fp.read() != other.file.fp.read():
+            other.file.reset()
+            self.file.reset()
+            kwargs['file'] = other.file
+            self.file = other.file
 
         return kwargs
 
