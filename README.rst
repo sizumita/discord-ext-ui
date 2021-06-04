@@ -74,8 +74,8 @@ Example
 
 
     class SampleViewModel(ObservedObject):
-        def __init__(self):
-            super().__init__()
+        def __init__(self, bot):
+            super().__init__(bot)
             self.num = Published(0)
 
         def countup(self):
@@ -88,22 +88,22 @@ Example
     class SampleView(View):
         def __init__(self):
             super().__init__()
-            self.viewModel = SampleViewModel()
+            self.view_model = SampleViewModel()
 
         async def add_reaction(self):
             await self.get_message().add_reaction("\U0001f44d")
 
         async def body(self):
             return Message(
-                content=f"test! {self.viewModel.num}",
+                content=f"test! {self.view_model.num}",
                 component=Component(items=[
                     [
                         Button("+1")
-                            .on_click(lambda x: self.viewModel.countup())
+                            .on_click(lambda x: self.view_model.countup())
                             .style(discord.ButtonStyle.blurple),
 
                         Button("-1")
-                            .on_click(lambda x: self.viewModel.countdown())
+                            .on_click(lambda x: self.view_model.countdown())
                             .style(discord.ButtonStyle.blurple)
                     ]
                 ])
