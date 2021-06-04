@@ -17,18 +17,17 @@ class ObservedObject:
             return
 
         if not hasattr(self, key):
-            if isinstance(value, Published):
+            if isinstance(value, Published) and hasattr(self, "_watch_variables"):
                 self._watch_variables.append(key)
                 object.__setattr__(self, key, value.value)
                 return
         if isinstance(value, Published):
             value = value.value
 
-        if key in self._watch_variables:
+        if key in getattr(self, "_watch_variables", []):
             object.__setattr__(self, key, value)
             if self.view is not None:
-                if self.view.client is not None:
-                    self.view.client.loop.create_task(self.view.update())
+                self.view.update_sync()
             return
 
         return object.__setattr__(self, key, value)

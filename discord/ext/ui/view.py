@@ -10,10 +10,10 @@ from .view_manager import ViewManager
 
 
 class View:
-    def __init__(self, client: Union[discord.Client, commands.Bot]) -> None:
+    def __init__(self, state: Union[discord.Client, commands.Bot]) -> None:
         self._watch_variables: List[str] = []
 
-        self.client: Union[discord.Client, commands.Bot] = client
+        self._state: Union[discord.Client, commands.Bot] = state
         self.manager = ViewManager()
         self.discord_message: Optional[discord.Message] = None
         self.view: Optional[ui.View] = None
@@ -21,16 +21,16 @@ class View:
         self._listeners: List[Callable] = []
 
     def add_listener(self, func: Callable, name: Optional[str] = None) -> None:
-        if not isinstance(self.client, commands.Bot):
+        if not isinstance(self._state, commands.Bot):
             raise ValueError("bot must be commands.Bot")
 
-        self.client.add_listener(func, name)
+        self._state.add_listener(func, name)
 
     def remove_listener(self, func: Callable, name: Optional[str] = None) -> None:
-        if not isinstance(self.client, commands.Bot):
+        if not isinstance(self._state, commands.Bot):
             raise ValueError("bot must be commands.Bot")
 
-        self.client.remove_listener(func, name)
+        self._state.remove_listener(func, name)
 
     @staticmethod
     def listen(name: Optional[str] = None) -> Callable:
@@ -73,6 +73,10 @@ class View:
         self.manager.raise_for_started()
         await self.manager.update((await self.body()))
 
+    def update_sync(self) -> None:
+        if self._state is not None:
+            self._state.loop.create_task(self.update())
+
     def __setattr__(self, key: str, value: Any) -> None:
         if key == "_watch_variables":
             object.__setattr__(self, key, value)
@@ -91,8 +95,7 @@ class View:
 
         if key in self._watch_variables:
             object.__setattr__(self, key, value)
-            if self.client is not None:
-                self.client.loop.create_task(self.update())
+            self.update_sync()
             return
 
         object.__setattr__(self, key, value)

@@ -41,7 +41,7 @@ Example
     import discord
     import os
 
-    client = commands.Bot("!")
+    client = discord.Client()
 
 
     class SampleViewModel(ObservedObject):
@@ -62,7 +62,7 @@ Example
             self.viewModel = SampleViewModel()
 
         async def add_reaction(self):
-            await self.discord_message.add_reaction("\U0001f44d")
+            await self.get_message().add_reaction("\U0001f44d")
 
         async def body(self):
             return Message(
