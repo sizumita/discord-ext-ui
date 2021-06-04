@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, Callable
+from typing import Optional, Tuple, Callable, Union
 
 import discord
 from discord import ui
@@ -7,14 +7,20 @@ from .component import Component
 from .utils import _call_any
 
 
+class MISSING:
+    def __eq__(self, other):
+        return False
+
+    def __str__(self):
+        return "MISSING"
+
+
 class Message:
     def __init__(self,
-                 content: Optional[str] = None,
+                 content: Optional[str] = MISSING,
                  embed: Optional[discord.Embed] = None,
-                 file: Optional[discord.File] = None,
                  component: Optional[Component] = None) -> None:
         self.content: Optional[str] = content
-        self.file: Optional[discord.File] = file
         self.embed: Optional[discord.Embed] = embed
         self.component: Optional[Component] = component
         self.appear_func: Optional[Callable] = None
@@ -33,31 +39,13 @@ class Message:
             kwargs['content'] = other.content
             self.content = other.content
 
-        if other.embed is None:
-            kwargs['embed'] = None
-            self.embed = None
-        elif self.embed != other.embed:
+        if self.embed != other.embed:
             kwargs['embed'] = other.embed
             self.embed = other.embed
 
-        if other.component is None:
-            kwargs['view'] = None
-            self.component = None
-        elif self.component != other.component:
+        if self.component != other.component:
             kwargs['view'] = other.component.make_view() if other.component is not None else None
             self.component = other.component
-
-        if other.file is None:
-            kwargs['file'] = None
-            self.file = None
-        elif self.file is None and other.file is not None:
-            kwargs['file'] = other.file
-            self.file = other.file
-        elif self.file is not None and self.file.fp.read() != other.file.fp.read():
-            other.file.reset()
-            self.file.reset()
-            kwargs['file'] = other.file
-            self.file = other.file
 
         return kwargs
 
