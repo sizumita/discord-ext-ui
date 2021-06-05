@@ -19,7 +19,7 @@ class CustomButton(ui.Button):
             url: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
             row: Optional[int] = None,
-            callback: Optional[Callable] = None
+            callback: Optional[Callable] = None,
     ) -> None:
         super(CustomButton, self).__init__(
             style=style,
@@ -46,12 +46,14 @@ class Button(Item):
             disabled: bool = False,
             url: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
+            custom_id: Optional[str] = None,
     ) -> None:
         self._style: ButtonStyle = style
         self._label: str = label
         self._disabled: bool = disabled
         self._url: Optional[str] = url
         self._emoji: Optional[Union[str, PartialEmoji]] = emoji
+        self._custom_id: Optional[str] = custom_id
 
         self._row: Optional[int] = None
 
@@ -64,8 +66,16 @@ class Button(Item):
         return self.to_dict() == other.to_dict()
 
     def to_discord(self) -> CustomButton:
-        return CustomButton(style=self._style, label=self._label, disabled=self._disabled, url=self._url,
-                            emoji=self._emoji, row=self._row, callback=self.func)
+        return CustomButton(
+            style=self._style,
+            label=self._label,
+            disabled=self._disabled,
+            url=self._url,
+            emoji=self._emoji,
+            row=self._row,
+            callback=self.func,
+            custom_id=self._custom_id
+        )
 
     def to_dict(self) -> dict:
         return {
@@ -74,7 +84,8 @@ class Button(Item):
             'disabled': self._disabled,
             'emoji': self._emoji,
             'row': self._row,
-            'callback': id(self.func)
+            'callback': id(self.func),
+            'custom_id': self._custom_id
         }
 
     def on_click(self, func: Callable) -> 'Button':
@@ -100,4 +111,8 @@ class Button(Item):
 
     def emoji(self, emoji: Union[str, PartialEmoji]) -> 'Button':
         self._emoji = emoji
+        return self
+
+    def custom_id(self, custom_id: str) -> 'Button':
+        self._custom_id = custom_id
         return self
