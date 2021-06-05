@@ -26,13 +26,6 @@ class Message:
         self.appear_func: Optional[Callable] = None
         self.disappear_func: Optional[Callable] = None
 
-    async def send(self, channel: discord.abc.Messageable) -> Tuple[ui.View, discord.Message]:
-        if self.component is None:
-            raise ValueError("component is None")
-
-        view = self.component.make_view()
-        return view, await channel.send(content=self.content, embed=self.embed, view=view)
-
     async def update(self, other: 'Message') -> dict:
         kwargs = {}
         if self.content != other.content:

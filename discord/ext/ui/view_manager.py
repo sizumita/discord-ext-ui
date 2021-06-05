@@ -20,10 +20,32 @@ class ViewManager:
             raise Exception("View rendering is not started")
 
     async def send(self, channel: discord.abc.Messageable, message: Message) -> None:
-        self.view, self.discord_message = await message.send(channel)
+        self.view = message.component.make_view()
+        self.discord_message = await channel.send(
+            content=message.content,
+            embed=message.embed,
+            view=self.view
+        )
 
     async def start(self, channel: discord.abc.Messageable, message: Message) -> None:
+        if self.started:
+            raise ValueError("This View has already started")
+
         await self.send(channel, message)
+        self.message = message
+        self.started = True
+
+    async def apply(self, apply_message: discord.Message, message: Message) -> None:
+        if self.started:
+            raise ValueError("This View has already started")
+
+        self.view = message.component.make_view()
+        self.discord_message = apply_message
+        await self.discord_message.edit(
+            content=message.content,
+            embed=message.embed,
+            view=self.view
+        )
         self.message = message
         self.started = True
 

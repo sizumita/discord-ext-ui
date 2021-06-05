@@ -50,14 +50,22 @@ class View:
         """
         return self.manager.discord_message
 
-    async def start(self, channel: discord.abc.Messageable) -> None:
-        await self.manager.start(channel, await self.body())
-        await self.manager.message.appear()
+    def _apply_listener(self):
         for name in dir(self):
             member = getattr(self, name, None)
             if hasattr(member, "__listener__"):
                 self.add_listener(member, getattr(member, "__listener_name__", None))
                 self._listeners.append(member)
+
+    async def start(self, channel: discord.abc.Messageable) -> None:
+        await self.manager.start(channel, await self.body())
+        await self.manager.message.appear()
+        self._apply_listener()
+    
+    async def apply(self, apply_message: discord.Message) -> None:
+        await self.manager.apply(apply_message, await self.body())
+        await self.manager.message.appear()
+        self._apply_listener()
 
     async def stop(self) -> None:
         self.manager.raise_for_started()
