@@ -4,7 +4,7 @@ from typing import Any, Callable
 import discord
 
 
-async def _call_any(func: Callable, *args: Any, **kwargs: Any) -> Callable:
+async def _call_any(func: Callable, *args: Any, **kwargs: Any) -> Any:
     if asyncio.iscoroutinefunction(func):
         return await func(*args, **kwargs)
     return func(*args, **kwargs)

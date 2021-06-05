@@ -61,7 +61,7 @@ class View:
         await self.manager.start(channel, await self.body())
         await self.manager.message.appear()
         self._apply_listener()
-    
+
     async def apply(self, apply_message: discord.Message) -> None:
         await self.manager.apply(apply_message, await self.body())
         await self.manager.message.appear()
