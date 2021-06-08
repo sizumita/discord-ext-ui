@@ -100,9 +100,9 @@ Example
 
 
     class SampleView(View):
-        def __init__(self):
-            super().__init__()
-            self.view_model = SampleViewModel()
+        def __init__(self, bot):
+            super().__init__(bot)
+            self.view_model = SampleViewModel(bot)
 
         async def add_reaction(self):
             await self.get_message().add_reaction("\U0001f44d")
