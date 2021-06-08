@@ -14,7 +14,7 @@ class View:
         self._watch_variables: List[str] = []
 
         self._state: Union[discord.Client, commands.Bot] = state
-        self.manager = ViewManager()
+        self.manager: ViewManager = ViewManager()
         self.discord_message: Optional[discord.Message] = None
         self.view: Optional[ui.View] = None
 

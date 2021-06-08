@@ -5,6 +5,7 @@ import discord
 from discord import ui
 
 from .message import Message
+from .types.view_manager import RenderKwargs
 
 
 class ViewManager:
@@ -15,7 +16,7 @@ class ViewManager:
         self.started: bool = False
         self.update_lock: asyncio.Lock = asyncio.Lock()
 
-    def raise_for_started(self):
+    def raise_for_started(self) -> None:
         if not self.started:
             raise Exception("View rendering is not started")
 
@@ -49,12 +50,12 @@ class ViewManager:
         self.message = message
         self.started = True
 
-    async def update(self, message: Message):
+    async def update(self, message: Message) -> None:
         self.raise_for_started()
         async with self.update_lock:
             kwargs = await self.message.update(message)
             await self.render(**kwargs)
 
-    async def render(self, **kwargs):
+    async def render(self, **kwargs: RenderKwargs) -> None:
         await self.discord_message.edit(**kwargs)
         self.view = kwargs.get("view", None)
