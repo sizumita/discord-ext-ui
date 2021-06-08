@@ -7,17 +7,9 @@ from .component import Component
 from .utils import _call_any
 
 
-class MISSING:
-    def __eq__(self, other):
-        return False
-
-    def __str__(self):
-        return "MISSING"
-
-
 class Message:
     def __init__(self,
-                 content: Optional[str] = MISSING,
+                 content: Optional[str] = None,
                  embed: Optional[discord.Embed] = None,
                  component: Optional[Component] = None) -> None:
         self.content: Optional[str] = content
