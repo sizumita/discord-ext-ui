@@ -59,6 +59,29 @@ itemsに`list[Button, Button]`を渡すと、ボタンが５個詰めで並び�
 Messageにはon_appear,on_disappearが存在し、これらはそれぞれView.start関数、View.stop関数が実行された際に呼び出されます。
 引数なしの関数またはコルーチン関数を渡してください。
 
+## state
+
+discord-ext-uiはstateと言うプロパティを提供します。これを使っている変数が変更されたときに、自動でViewが更新されます。
+
+```python
+class MyView(View):
+    something = state('something')
+    def __init__(self, bot):
+        super(MyView, self).__init__(bot)
+        self.something = "what happened!?"
+
+    def update_something(self):
+        self.something = "nothing is happened."
+
+    async def body(self):
+        return Message(
+            content=self.something,
+            component=Component(items=[Button("show").on_click(self.update_something)])
+        )
+```
+
+showと言うボタンが押されたとき、self.somethingが変更されます。このとき、自動でviewが更新されます。
+
 ## discord.ext.commands.Botを使った際に使える機能
 
 ### discordのイベントリスナー
@@ -72,6 +95,6 @@ class MyView(View):
         ...
 ```
 
-## ObservedObject
+## ObservableObject
 
-ObservedObjectを継承しているクラスのインスタンス変数をPublishedでラップすると、その変数が変更されたときに自動的にviewが更新されます。
+ObservableObjectを継承しているクラスのインスタンス変数をpublishedでラップすると、その変数が変更されたときに自動的にviewが更新されます。

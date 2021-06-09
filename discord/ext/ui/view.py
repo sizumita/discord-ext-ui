@@ -4,15 +4,13 @@ import discord
 from discord import ui
 from discord.ext import commands
 
-from .combine import State, ObservedObject
+from .combine import ObservableObject
 from .message import Message
 from .view_manager import ViewManager
 
 
 class View:
     def __init__(self, state: Union[discord.Client, commands.Bot]) -> None:
-        self._watch_variables: List[str] = []
-
         self._state: Union[discord.Client, commands.Bot] = state
         self.manager = ViewManager()
         self.discord_message: Optional[discord.Message] = None
@@ -90,24 +88,7 @@ class View:
             self._state.loop.create_task(self.update())
 
     def __setattr__(self, key: str, value: Any) -> None:
-        if key == "_watch_variables":
-            object.__setattr__(self, key, value)
-            return
-
-        if isinstance(value, ObservedObject):
+        if isinstance(value, ObservableObject):
             value.view = self
-
-        if not hasattr(self, key):
-            if isinstance(value, State):
-                self._watch_variables.append(key)
-                object.__setattr__(self, key, value.value)
-                return
-        if isinstance(value, State):
-            value = value.value
-
-        if key in self._watch_variables:
-            object.__setattr__(self, key, value)
-            self.update_sync()
-            return
 
         object.__setattr__(self, key, value)

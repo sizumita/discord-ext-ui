@@ -1,4 +1,4 @@
-from discord.ext.ui import Component, Button, View, ObservedObject, Published, Message
+from discord.ext.ui import Component, Button, View, ObservableObject, published, Message
 from discord.ext import commands
 import discord
 import os
@@ -6,10 +6,12 @@ import os
 bot = commands.Bot("!")
 
 
-class SampleViewModel(ObservedObject):
+class SampleViewModel(ObservableObject):
+    num = published('num')
+
     def __init__(self):
         super().__init__()
-        self.num = Published(0)
+        self.num = 0
 
     def countup(self):
         self.num += 1

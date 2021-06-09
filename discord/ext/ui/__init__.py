@@ -1,5 +1,5 @@
 # flake8: noqa
-from .combine import ObservedObject, Published, State
+from .combine import ObservableObject, published, state
 from .button import Button
 from .view import View
 from .component import Component
@@ -9,4 +9,4 @@ from .select import Select
 from .select_option import SelectOption
 
 
-__version__ = "1.1.5a"
+__version__ = "1.2.0a"

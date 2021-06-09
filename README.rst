@@ -42,7 +42,7 @@ discord-ext-uiを採用する利点
 
 MVVMを用いらずに実装する場合、ボタンの押下時に内部状態が変更された際にその状態を反映してメッセージの更新を行う処理を明示的に記述する必要があります。
 
-対して、discord-ext-uiでは、 `State` や `Published` といった変数のラッパーを提供します。このラッパーを使用することで、メンバ変数の変更に応じてメッセージの更新を明示的に書く必要がなくなります。
+対して、discord-ext-uiでは、 `state` や `published` といった変数のラッパーを提供します。このラッパーを使用することで、メンバ変数の変更に応じてメッセージの更新を明示的に書く必要がなくなります。
 
 また、ボタンが押されたときに実行される関数を宣言的に設定できるので、forループ等の複雑な処理を行うことも可能です。
 
@@ -63,15 +63,33 @@ Viewは `body` という名前のメソッドを実装しなければなりま�
 State
 =====
 
-StateはViewのインスタンス変数として使います。
-View上のStateを更新するとメッセージの更新が行われます。つまり、ライブラリによって、 `body` メソッドが呼び出され、その結果を用いてDiscord上のメッセージが更新されます。
+stateはViewのプロパティとして振る舞います。
+Viewのクラス変数として定義したあと、値を代入してください。
+
+.. code-block::python
+    class MyView(View):
+        something = state('something')  # 名前を指定する
+
+        def __init__(self, bot):
+            super().__init__(bot)
+            self.something = "what happened!?"
+
+
+View上のstateを更新するとメッセージの更新が行われます。つまり、ライブラリによって、 `body` メソッドが呼び出され、その結果を用いてDiscord上のメッセージが更新されます。
 
 ObservedObjectとPublished
 ==========================
 
 これはMVVMに関連した概念です。MVVMを用いないのであればこの節は読まなくても良いかもしれません。
-`ObservedObject` を継承したViewModelをViewのインスタンス変数とするとViewは自動的にViewModelの `Published` クラスのインスタンスである変数の変更を監視します。
-ViewModelの `Published` クラスのインスタンスである変数の変更が行われるとStateの更新時と同じようにメッセージの更新が行われます。(データバインディング)
+`ObservableObject` を継承したViewModelをViewのインスタンス変数とすると、
+ObservableObjectのpublished propertyにした値が変更されたとき、Viewに変更を通知して、Viewが自動で更新されます。
+
+.. code-block::python
+    class MyViewModel(ObservableObject):
+        num = published('num')
+
+        def __init__(self):
+            self.num = 1
 
 
 Example
@@ -79,7 +97,7 @@ Example
 
 .. code-block:: python
 
-    from discord.ext.ui import Component, Button, View, ObservedObject, Published, Message
+    from discord.ext.ui import Component, Button, View, ObservableObject, published, Message
     from discord.ext import commands
     import discord
     import os
@@ -87,10 +105,12 @@ Example
     client = discord.Client()
 
 
-    class SampleViewModel(ObservedObject):
+    class SampleViewModel(ObservableObject):
+        num = published('num')
+
         def __init__(self, bot):
             super().__init__(bot)
-            self.num = Published(0)
+            self.num = 0
 
         def countup(self):
             self.num += 1
