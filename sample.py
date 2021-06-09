@@ -32,7 +32,8 @@ class SampleView(View):
 
     @View.listen(name="on_reaction_add")
     async def watch_reaction_add(self, reaction: discord.Reaction, user: discord.User):
-        if reaction.message == self.discord_message and str(reaction.emoji) == "\U0001f44d":
+        if reaction.message == self.discord_message \
+                and str(reaction.emoji) == "\U0001f44d":
             self.viewModel.countup()
 
     async def body(self):
@@ -41,17 +42,17 @@ class SampleView(View):
             component=Component(items=[
                 [
                     Button("+1")
-                        .on_click(lambda x: self.viewModel.countup())
-                        .style(discord.ButtonStyle.blurple),
+                    .on_click(lambda x: self.viewModel.countup())
+                    .style(discord.ButtonStyle.blurple),
 
                     Button("-1")
-                        .on_click(lambda x: self.viewModel.countdown())
-                        .style(discord.ButtonStyle.blurple)
+                    .on_click(lambda x: self.viewModel.countdown())
+                    .style(discord.ButtonStyle.blurple)
                 ],
                 [
                     Button("終わる")
-                        .on_click(self.delete)
-                        .style(discord.ButtonStyle.danger)
+                    .on_click(self.delete)
+                    .style(discord.ButtonStyle.danger)
                 ]
             ])
         ).on_appear(self.add_reaction)

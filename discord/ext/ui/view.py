@@ -14,7 +14,7 @@ class View:
         self._watch_variables: List[str] = []
 
         self._state: Union[discord.Client, commands.Bot] = state
-        self.manager: ViewManager = ViewManager()
+        self.manager = ViewManager()
         self.discord_message: Optional[discord.Message] = None
         self.view: Optional[ui.View] = None
 
@@ -50,7 +50,7 @@ class View:
         """
         return self.manager.discord_message
 
-    def _apply_listener(self):
+    def _apply_listener(self) -> None:
         for name in dir(self):
             member = getattr(self, name, None)
             if hasattr(member, "__listener__"):
@@ -59,13 +59,15 @@ class View:
 
     async def start(self, channel: discord.abc.Messageable) -> None:
         await self.manager.start(channel, await self.body())
-        await self.manager.message.appear()
-        self._apply_listener()
+        if self.manager.message is not None:
+            await self.manager.message.appear()
+            self._apply_listener()
 
     async def apply(self, apply_message: discord.Message) -> None:
         await self.manager.apply(apply_message, await self.body())
-        await self.manager.message.appear()
-        self._apply_listener()
+        if self.manager.message is not None:
+            await self.manager.message.appear()
+            self._apply_listener()
 
     async def stop(self) -> None:
         self.manager.raise_for_started()
@@ -73,7 +75,9 @@ class View:
         for listener in self._listeners:
             self.remove_listener(listener, getattr(listener, "__listener_name__", None))
 
-        await self.manager.message.disappear()
+        if self.manager.message is not None:
+            await self.manager.message.disappear()
+
         if self.view is not None:
             self.view.stop()
 

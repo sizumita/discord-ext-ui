@@ -9,7 +9,7 @@ from .types.view_manager import RenderKwargs
 
 
 class ViewManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.message: Optional[Message] = None
         self.discord_message: Optional[discord.Message] = None
         self.view: Optional[ui.View] = None
@@ -21,7 +21,8 @@ class ViewManager:
             raise Exception("View rendering is not started")
 
     async def send(self, channel: discord.abc.Messageable, message: Message) -> None:
-        self.view = message.component.make_view()
+        if message.component is not None:
+            self.view = message.component.make_view()
         self.discord_message = await channel.send(
             content=message.content,
             embed=message.embed,
@@ -40,7 +41,9 @@ class ViewManager:
         if self.started:
             raise ValueError("This View has already started")
 
-        self.view = message.component.make_view()
+        if message.component is not None:
+            self.view = message.component.make_view()
+
         self.discord_message = apply_message
         await self.discord_message.edit(
             content=message.content,
@@ -53,9 +56,13 @@ class ViewManager:
     async def update(self, message: Message) -> None:
         self.raise_for_started()
         async with self.update_lock:
+            if self.message is None:
+                return
             kwargs = await self.message.update(message)
             await self.render(**kwargs)
 
     async def render(self, **kwargs: RenderKwargs) -> None:
+        if self.discord_message is None:
+            return
         await self.discord_message.edit(**kwargs)
         self.view = kwargs.get("view", None)

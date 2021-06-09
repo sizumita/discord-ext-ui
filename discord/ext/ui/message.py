@@ -1,7 +1,6 @@
-from typing import Optional, Tuple, Callable, Union
+from typing import Optional, Callable
 
 import discord
-from discord import ui
 
 from .component import Component
 from .utils import _call_any
