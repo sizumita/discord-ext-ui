@@ -50,5 +50,5 @@ class Select(Item):
             min_values=self._min_values,
             max_values=self._max_values,
             options=[o.to_discord_select_option() for o in self._options],
-            group=self._row
+            row=self._row
         )
