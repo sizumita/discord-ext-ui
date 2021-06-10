@@ -11,7 +11,7 @@ class Component:
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Component):
-            return NotImplemented
+            return False
 
         return self.items == other.items
 

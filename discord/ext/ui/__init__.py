@@ -7,6 +7,7 @@ from .message import Message
 from .utils import async_interaction_partial, interaction_partial
 from .select import Select
 from .select_option import SelectOption
+from .view_builder import ViewBuilder
 
 
-__version__ = "1.2.0a"
+__version__ = "2.0.0a"
