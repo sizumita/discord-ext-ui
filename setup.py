@@ -42,7 +42,7 @@ setup(
     version=version,
     long_description=readme,
     long_description_content_type="text/x-rst",
-    packages=['discord.ext.ui', 'discord.ext.ui.combine'],
+    packages=['discord.ext.ui', 'discord.ext.ui.combine', 'discord.ext.ui.types'],
     license='MIT',
     description='An Declarative UI Kit for discord.py',
     install_requires=[],
