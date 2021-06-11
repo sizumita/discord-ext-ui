@@ -1,4 +1,4 @@
-from typing import List, Optional, Union, ClassVar
+from typing import List, Optional, Union
 
 from discord import ui
 
@@ -10,8 +10,6 @@ Items = List[ViewItem]
 
 
 class ViewBuilder:
-    __discord_ui_view__: ClassVar[bool] = True
-
     def __init__(self, items: Optional[Items] = None) -> None:
         self.items = items if items is not None else []
 
