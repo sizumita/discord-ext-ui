@@ -16,7 +16,7 @@ class Component:
         return self.items == other.items
 
     def make_view(self) -> ui.View:
-        view = ui.View(None)
+        view = ui.View(timeout=None)
         i = 0
         for item in self.items:
             if not isinstance(item, list):

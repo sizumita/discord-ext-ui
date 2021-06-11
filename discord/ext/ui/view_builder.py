@@ -13,9 +13,7 @@ class ViewBuilder:
     __discord_ui_view__: ClassVar[bool] = True
 
     def __init__(self, items: Optional[Items] = None) -> None:
-        if items is None:
-            items: Items = Items([])
-        self.items = items
+        self.items = items if items is not None else []
 
     def append(self, item: ViewItem) -> 'ViewBuilder':
         self.items.append(item)
@@ -28,7 +26,7 @@ class ViewBuilder:
     def index(self, item: ViewItem) -> int:
         return self.items.index(item)
 
-    def pop(self, index: int) -> Item:
+    def pop(self, index: int) -> ViewItem:
         return self.items.pop(index)
 
     def remove(self, item: ViewItem) -> 'ViewBuilder':
@@ -39,8 +37,8 @@ class ViewBuilder:
         self.items.clear()
         return self
 
-    def build(self) -> ui.View:
-        view = ui.View()
+    def build(self, *, timeout: Optional[int] = None) -> ui.View:
+        view = ui.View(timeout=timeout)
 
         i = 0
         for item in self.items:

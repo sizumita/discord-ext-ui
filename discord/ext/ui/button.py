@@ -8,6 +8,10 @@ from .item import Item
 from .utils import _call_any
 
 
+def _default_check(_: discord.Interaction) -> bool:
+    return True
+
+
 class CustomButton(ui.Button):
     def __init__(
             self,
@@ -20,6 +24,7 @@ class CustomButton(ui.Button):
             emoji: Optional[Union[str, PartialEmoji]] = None,
             row: Optional[int] = None,
             callback: Optional[Callable] = None,
+            check_func: Callable[[discord.Interaction], bool]
     ) -> None:
         super(CustomButton, self).__init__(
             style=style,
@@ -31,11 +36,13 @@ class CustomButton(ui.Button):
             row=row
         )
         self.callback_func: Optional[Callable] = callback
+        self.check_func: Callable[[discord.Interaction], bool] = check_func
 
     async def callback(self, interaction: discord.Interaction) -> None:
         if self.callback_func is None:
             return
-        await _call_any(self.callback_func, interaction)
+        if self.check_func(interaction):
+            await _call_any(self.callback_func, interaction)
 
 
 class Button(Item):
@@ -58,6 +65,7 @@ class Button(Item):
         self._row: Optional[int] = None
 
         self.func: Optional[Callable] = None
+        self.check_func: Callable[[discord.Interaction], bool] = _default_check
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Button):
@@ -74,7 +82,8 @@ class Button(Item):
             emoji=self._emoji,
             row=self._row,
             callback=self.func,
-            custom_id=self._custom_id
+            custom_id=self._custom_id,
+            check_func=self.check_func
         )
 
     def to_dict(self) -> dict:
@@ -85,6 +94,7 @@ class Button(Item):
             'emoji': self._emoji,
             'row': self._row,
             'callback': id(self.func),
+            'check': id(self.check_func),
             'custom_id': self._custom_id
         }
 
@@ -115,4 +125,8 @@ class Button(Item):
 
     def custom_id(self, custom_id: str) -> 'Button':
         self._custom_id = custom_id
+        return self
+
+    def check(self, func: Callable[[discord.Interaction], bool]) -> 'Item':
+        self.check_func = func
         return self
