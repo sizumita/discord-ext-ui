@@ -1,4 +1,4 @@
-from typing import Optional, List, Union, Callable, Any
+from typing import Optional, List, Union, Callable, Any, overload
 
 import discord
 from discord import ui
@@ -7,6 +7,7 @@ from discord.ext import commands
 from .combine import ObservableObject
 from .message import Message
 from .view_manager import ViewManager
+from .types.view import Target
 
 
 class View:
@@ -71,15 +72,15 @@ class View:
                 self.add_listener(member, getattr(member, "__listener_name__", None))
                 self._listeners.append(member)
 
-    async def start(self, channel: discord.abc.Messageable) -> None:
+    async def start(self, target: Target, **kwargs) -> None:
         """Send a Message to channel and attach View to it.
 
         Parameters
         -----------
-        channel: :class:`discord.abc.Messageable`
-            The Channel or commands.Context to send Message.
+        target: Union[:class:`discord.abc.Messageable`, :class:`discord.Interaction`, :class:`discord.Webhook`]
+            The target to send.
         """
-        await self.manager.start(channel, await self.body())
+        await self.manager.start(target, await self.body(), **kwargs)
         if self.manager.message is not None:
             await self.manager.message.appear()
             self._apply_listener()

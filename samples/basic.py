@@ -30,7 +30,7 @@ class SampleView(View):
         await self.stop()
 
     async def add_reaction(self):
-        await self.get_message().add_reaction("\U0001f44d")
+        await self.message.add_reaction("\U0001f44d")
 
     @View.listen(name="on_reaction_add")
     async def watch_reaction_add(self, reaction: discord.Reaction, user: discord.User):
@@ -64,6 +64,7 @@ class SampleView(View):
 async def on_message(message):
     if message.content != "!test":
         return
+
     await SampleView(bot).start(message.channel)
 
 

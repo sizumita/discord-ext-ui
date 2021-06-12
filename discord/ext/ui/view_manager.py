@@ -5,7 +5,8 @@ import discord
 from discord import ui
 
 from .message import Message
-from .types.view_manager import RenderKwargs
+from .types.view import Target
+from .types.view_manager import RenderKwargs, TargetType
 
 
 class ViewManager:
@@ -15,25 +16,51 @@ class ViewManager:
         self.view: Optional[ui.View] = None
         self.started: bool = False
         self.update_lock: asyncio.Lock = asyncio.Lock()
+        self.target_type: TargetType = TargetType.Normal
 
     def raise_for_started(self) -> None:
         if not self.started:
             raise Exception("View rendering is not started")
 
-    async def send(self, channel: discord.abc.Messageable, message: Message) -> None:
+    async def send(self, target: Target, message: Message, **kwargs) -> None:
         if message.component is not None:
             self.view = message.component.make_view()
-        self.discord_message = await channel.send(
-            content=message.content,
-            embed=message.embed,
-            view=self.view
-        )
 
-    async def start(self, channel: discord.abc.Messageable, message: Message) -> None:
+        if type(target) is discord.abc.Messageable:
+            self.discord_message = await target.send(
+                content=message.content,
+                embed=message.embed,
+                view=self.view
+            )
+        elif isinstance(target, discord.Interaction):
+            await target.response.send_message(
+                content=message.content,
+                embed=message.embed or discord.utils.MISSING,
+                view=self.view or discord.utils.MISSING
+            )
+            self.target_type = TargetType.Interaction
+        elif isinstance(target, discord.Webhook):
+            kwargs_ = {}
+            for k, v in kwargs.items():
+                kwargs_[k] = v if v is not None else discord.utils.MISSING
+            self.discord_message = await target.send(
+                content=message.content or discord.utils.MISSING,
+                embed=message.embed or discord.utils.MISSING,
+                view=self.view or discord.utils.MISSING,
+                wait=True,
+                **kwargs_
+            )
+            self.target_type = TargetType.Webhook
+
+    async def start(
+            self,
+            target: Target,
+            message: Message,
+            **kwargs) -> None:
         if self.started:
             raise ValueError("This View has already started")
 
-        await self.send(channel, message)
+        await self.send(target, message, **kwargs)
         self.message = message
         self.started = True
 
@@ -54,6 +81,8 @@ class ViewManager:
         self.started = True
 
     async def update(self, message: Message) -> None:
+        if self.target_type is TargetType.Interaction:
+            return
         self.raise_for_started()
         async with self.update_lock:
             if self.message is None:
@@ -64,5 +93,13 @@ class ViewManager:
     async def render(self, **kwargs: RenderKwargs) -> None:
         if self.discord_message is None:
             return
-        await self.discord_message.edit(**kwargs)
+
+        if self.target_type is TargetType.Webhook:
+            kwargs_ = {}
+            for k, v in kwargs.items():
+                kwargs_[k] = v if v is not None else discord.utils.MISSING
+        else:
+            kwargs_ = kwargs
+
+        await self.discord_message.edit(**kwargs_)
         self.view = kwargs.get("view", None)
