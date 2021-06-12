@@ -12,19 +12,42 @@ from .view_manager import ViewManager
 class View:
     def __init__(self, state: Union[discord.Client, commands.Bot]) -> None:
         self._state: Union[discord.Client, commands.Bot] = state
-        self.manager = ViewManager()
+        self.manager: ViewManager = ViewManager()
         self.discord_message: Optional[discord.Message] = None
         self.view: Optional[ui.View] = None
 
         self._listeners: List[Callable] = []
 
+    @property
+    def message(self) -> Optional[discord.Message]:
+        """Optional[:class:`discord.Message`]: The message that this View is attached."""
+        return self.manager.discord_message
+
     def add_listener(self, func: Callable, name: Optional[str] = None) -> None:
+        """Add Listener to ext.commands.Bot.
+
+        Parameters
+        -----------
+        func: :ref:`coroutine <coroutine>`
+            The function to call.
+        name: Optional[:class:`str`]
+            The name of the event to listen for. Defaults to ``func.__name__``.
+        """
         if not isinstance(self._state, commands.Bot):
             raise ValueError("bot must be commands.Bot")
 
         self._state.add_listener(func, name)
 
     def remove_listener(self, func: Callable, name: Optional[str] = None) -> None:
+        """Remove Listener from ext.commands.Bot.
+
+        Parameters
+        -----------
+        func: :ref:`coroutine <coroutine>`
+            The function to remove.
+        name: Optional[:class:`str`]
+            The name of the event to listen for. Defaults to ``func.__name__``.
+        """
         if not isinstance(self._state, commands.Bot):
             raise ValueError("bot must be commands.Bot")
 
@@ -41,13 +64,6 @@ class View:
     async def body(self) -> Message:
         return Message()
 
-    def get_message(self) -> discord.Message:
-        """
-        Returns message that this View is attended
-        :return: discord.Message
-        """
-        return self.manager.discord_message
-
     def _apply_listener(self) -> None:
         for name in dir(self):
             member = getattr(self, name, None)
@@ -56,18 +72,33 @@ class View:
                 self._listeners.append(member)
 
     async def start(self, channel: discord.abc.Messageable) -> None:
+        """Send a Message to channel and attach View to it.
+
+        Parameters
+        -----------
+        channel: :class:`discord.abc.Messageable`
+            The Channel or commands.Context to send Message.
+        """
         await self.manager.start(channel, await self.body())
         if self.manager.message is not None:
             await self.manager.message.appear()
             self._apply_listener()
 
     async def apply(self, apply_message: discord.Message) -> None:
+        """Attach View to apply_message.
+
+        Parameters
+        -----------
+        apply_message: :class:`discord.Message`
+            The Message to attach.
+        """
         await self.manager.apply(apply_message, await self.body())
         if self.manager.message is not None:
             await self.manager.message.appear()
             self._apply_listener()
 
     async def stop(self) -> None:
+        """Stop View listener and Interaction."""
         self.manager.raise_for_started()
 
         for listener in self._listeners:

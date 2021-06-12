@@ -14,6 +14,13 @@ class ViewBuilder:
         self.items = items if items is not None else []
 
     def append(self, item: ViewItem) -> 'ViewBuilder':
+        """Append Item to ViewBuilder.
+
+        Parameters
+        -----------
+        item: Union[:class:`Item`, List[:class:`Item`]]
+            Item or Item List to append.
+        """
         self.items.append(item)
         return self
 
