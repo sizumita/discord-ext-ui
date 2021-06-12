@@ -10,4 +10,4 @@ from .select_option import SelectOption
 from .view_builder import ViewBuilder
 
 
-__version__ = "2.0.0a"
+__version__ = "2.0.0"

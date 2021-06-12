@@ -1,4 +1,4 @@
-from typing import Optional, List, Union, Callable, Any, overload
+from typing import Optional, List, Union, Callable, Any
 
 import discord
 from discord import ui
