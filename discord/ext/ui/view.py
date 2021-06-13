@@ -112,7 +112,8 @@ class View:
             self.view.stop()
 
     async def update(self) -> None:
-        self.manager.raise_for_started()
+        if not self.manager.started:
+            return
         await self.manager.update((await self.body()))
 
     def update_sync(self) -> None:
