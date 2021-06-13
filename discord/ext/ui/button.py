@@ -1,48 +1,14 @@
 from typing import Optional, Union, Callable
 
 import discord
-from discord import ui
 from discord import ButtonStyle, PartialEmoji
 
 from .item import Item
-from .utils import _call_any
+from .custom import CustomButton
 
 
 def _default_check(_: discord.Interaction) -> bool:
     return True
-
-
-class CustomButton(ui.Button):
-    def __init__(
-            self,
-            *,
-            style: ButtonStyle,
-            label: str,
-            disabled: bool = False,
-            custom_id: Optional[str] = None,
-            url: Optional[str] = None,
-            emoji: Optional[Union[str, PartialEmoji]] = None,
-            row: Optional[int] = None,
-            callback: Optional[Callable] = None,
-            check_func: Callable[[discord.Interaction], bool]
-    ) -> None:
-        super(CustomButton, self).__init__(
-            style=style,
-            label=label,
-            disabled=disabled,
-            custom_id=custom_id,
-            url=url,
-            emoji=emoji,
-            row=row
-        )
-        self.callback_func: Optional[Callable] = callback
-        self.check_func: Callable[[discord.Interaction], bool] = check_func
-
-    async def callback(self, interaction: discord.Interaction) -> None:
-        if self.callback_func is None:
-            return
-        if self.check_func(interaction):
-            await _call_any(self.callback_func, interaction)
 
 
 class Button(Item):
