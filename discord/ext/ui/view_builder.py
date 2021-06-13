@@ -1,4 +1,4 @@
-from typing import List, Optional, Union
+from typing import List, Optional, Union, TypeVar, Generic
 
 from discord import ui
 
@@ -8,10 +8,13 @@ ViewItem = Union[Item, List[Item]]
 
 Items = List[ViewItem]
 
+C = TypeVar("C")
 
-class ViewBuilder:
-    def __init__(self, items: Optional[Items] = None) -> None:
+
+class ViewBuilder(Generic[C]):
+    def __init__(self, items: Optional[Items] = None, cls: C = ui.View) -> None:
         self.items = items if items is not None else []
+        self.cls: C = cls
 
     def append(self, item: ViewItem) -> 'ViewBuilder':
         """Append Item to ViewBuilder.
@@ -43,7 +46,7 @@ class ViewBuilder:
         return self
 
     def build(self, *, timeout: Optional[int] = None) -> ui.View:
-        view = ui.View(timeout=timeout)
+        view = self.cls(timeout=timeout)
 
         i = 0
         for item in self.items:
