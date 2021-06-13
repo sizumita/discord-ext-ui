@@ -6,7 +6,7 @@ from discord import ui
 
 from .message import Message
 from .types.view import Target
-from .types.view_manager import RenderKwargs, TargetType
+from .types.view_manager import RenderKwargs, TargetType, Messageable
 
 
 class ViewManager:
@@ -26,7 +26,7 @@ class ViewManager:
         if message.component is not None:
             self.view = message.component.make_view()
 
-        if type(target) is discord.abc.Messageable:
+        if isinstance(target, Messageable):
             self.discord_message = await target.send(
                 content=message.content,
                 embed=message.embed,
