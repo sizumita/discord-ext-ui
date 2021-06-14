@@ -1,28 +1,30 @@
-from typing import Optional, List
+from typing import Optional, List, TypeVar, Generic
 
-from discord import ui
+import discord.ui
 
 from .item import Item
 from .select_option import SelectOption
+from .custom import CustomSelect
 
 
-class CustomSelect(ui.Select):
-    pass
+C = TypeVar("C", bound=discord.ui.Select)
 
 
-class Select(Item):
+class Select(Item, Generic[C]):
     def __init__(
             self,
             placeholder: Optional[str] = None,
             min_values: int = 1,
             max_values: int = 1,
-            options: Optional[list] = None
+            options: Optional[list] = None,
+            cls: C = CustomSelect
     ) -> None:
         self._placeholder: Optional[str] = placeholder
         self._min_values: int = min_values
         self._max_values: int = max_values
         self._options: list = [] if options is None else options
         self._row: Optional[int] = None
+        self.cls: C = cls
 
     def placeholder(self, placeholder: str) -> 'Select':
         self._placeholder = placeholder
@@ -44,8 +46,8 @@ class Select(Item):
         self._row = row
         return self
 
-    def to_discord(self) -> CustomSelect:
-        return CustomSelect(
+    def to_discord(self) -> C:
+        return self.cls(
             placeholder=self._placeholder,
             min_values=self._min_values,
             max_values=self._max_values,

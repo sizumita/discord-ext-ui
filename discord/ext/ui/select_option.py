@@ -1,10 +1,13 @@
-from typing import Optional, Union
+from typing import Optional, Union, Generic, TypeVar
 
 import discord
 from discord import PartialEmoji
 
 
-class SelectOption:
+C = TypeVar("C", bound=discord.SelectOption)
+
+
+class SelectOption(Generic[C]):
     def __init__(
             self,
             label: str,
@@ -12,6 +15,7 @@ class SelectOption:
             description: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
             default: bool = False,
+            cls: C = discord.SelectOption
     ) -> None:
         self._label: str = label
         self._value: Optional[str] = label if value is None else value
@@ -22,6 +26,8 @@ class SelectOption:
 
         self._emoji: Optional[str] = emoji
         self._default: bool = default
+
+        self.cls: C = cls
 
     def label(self, label: str) -> 'SelectOption':
         """Set the label of the option.
@@ -108,8 +114,8 @@ class SelectOption:
         self._default = default
         return self
 
-    def to_discord_select_option(self) -> discord.SelectOption:
-        return discord.SelectOption(
+    def to_discord_select_option(self) -> C:
+        return self.cls(
             label=self._label,
             value=self._value,
             description=self._description,

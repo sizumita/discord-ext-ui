@@ -59,3 +59,7 @@ class CustomButton(ui.Button):
             return
         if self.check_func(interaction):
             await _call_any(self.callback_func, interaction)
+
+
+class CustomSelect(ui.Select):
+    pass

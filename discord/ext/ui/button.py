@@ -1,4 +1,4 @@
-from typing import Optional, Union, Callable
+from typing import Optional, Union, Callable, Generic, TypeVar
 
 import discord
 from discord import ButtonStyle, PartialEmoji
@@ -7,11 +7,14 @@ from .item import Item
 from .custom import CustomButton
 
 
+C = TypeVar("C", bound=discord.ui.Button)
+
+
 def _default_check(_: discord.Interaction) -> bool:
     return True
 
 
-class Button(Item):
+class Button(Item, Generic[C]):
     def __init__(
             self,
             label: str = "",
@@ -20,6 +23,7 @@ class Button(Item):
             url: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
             custom_id: Optional[str] = None,
+            cls: C = CustomButton
     ) -> None:
         self._style: ButtonStyle = style
         self._label: str = label
@@ -29,6 +33,7 @@ class Button(Item):
         self._custom_id: Optional[str] = custom_id
 
         self._row: Optional[int] = None
+        self.cls: C = cls
 
         self.func: Optional[Callable] = None
         self.check_func: Callable[[discord.Interaction], bool] = _default_check
@@ -39,8 +44,8 @@ class Button(Item):
 
         return self.to_dict() == other.to_dict()
 
-    def to_discord(self) -> CustomButton:
-        return CustomButton(
+    def to_discord(self) -> C:
+        return self.cls(
             style=self._style,
             label=self._label,
             disabled=self._disabled,
