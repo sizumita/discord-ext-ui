@@ -89,6 +89,7 @@ class ViewManager:
         async with self.update_lock:
             if self.message is None:
                 return
+            self.view = CustomView(self)
             kwargs = await self.message.update(message, self.view)
             await self.render(**kwargs)
 
