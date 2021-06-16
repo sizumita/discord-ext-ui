@@ -98,6 +98,6 @@ class Button(Item, Generic[C]):
         self._custom_id = custom_id
         return self
 
-    def check(self, func: Callable[[discord.Interaction], bool]) -> 'Item':
+    def check(self, func: Callable[[discord.Interaction], bool]) -> 'Button':
         self.check_func = func
         return self
