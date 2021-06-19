@@ -1,9 +1,9 @@
 from typing import Optional, Callable
 
 import discord
+from discord import ui
 
 from .component import Component
-from .custom import CustomView
 from .utils import _call_any
 
 
@@ -18,7 +18,7 @@ class Message:
         self.appear_func: Optional[Callable] = None
         self.disappear_func: Optional[Callable] = None
 
-    async def update(self, other: 'Message', view: CustomView) -> dict:
+    async def update(self, other: 'Message', view: ui.View) -> dict:
         kwargs = {}
         if self.content != other.content:
             kwargs['content'] = other.content
@@ -32,9 +32,8 @@ class Message:
             if other.component is None and self.component is not None:
                 kwargs['view'] = None
                 self.component = None
-                view.replaced = True
             else:
-                other.component.make_view(view)
+                other.component.make(view)
                 kwargs['view'] = view
                 self.component = other.component
 

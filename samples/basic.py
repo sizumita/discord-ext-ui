@@ -29,12 +29,9 @@ class SampleView(View):
         await interaction.message.delete()
         await self.stop()
 
-    async def add_reaction(self):
-        await self.message.add_reaction("\U0001f44d")
-
     @View.listen(name="on_reaction_add")
     async def watch_reaction_add(self, reaction: discord.Reaction, user: discord.User):
-        if reaction.message == self.discord_message \
+        if reaction.message == self._discord_message \
                 and str(reaction.emoji) == "\U0001f44d":
             self.viewModel.countup()
 
@@ -65,7 +62,8 @@ async def on_message(message):
     if message.content != "!test":
         return
 
-    await SampleView(bot).start(message.channel)
+    view = await SampleView(bot).setup()
+    await message.channel.send(**view.build())
 
 
 bot.run(os.environ["DISCORD_BOT_TOKEN"])

@@ -15,7 +15,7 @@ class Component:
 
         return self.items == other.items
 
-    def make_view(self, view: ui.View) -> None:
+    def make(self, view: ui.View) -> None:
         view.clear_items()
         i = 0
         for item in self.items:

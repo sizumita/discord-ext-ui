@@ -7,18 +7,17 @@ from discord import ui
 from .message import Message
 from .types.view import Target
 from .types.view_manager import RenderKwargs, TargetType, Messageable
-from .custom import CustomView
 
 
 class ViewManager:
-    def __init__(self) -> None:
+    def __init__(self, view: ui.View) -> None:
         self.message: Optional[Message] = None
         self.discord_message: Optional[discord.Message] = None
         self.view: Optional[ui.View] = None
         self.started: bool = False
         self.update_lock: asyncio.Lock = asyncio.Lock()
         self.target_type: TargetType = TargetType.Normal
-        self.view: CustomView = CustomView(self)
+        self.view: ui.View = view
 
     def raise_for_started(self) -> None:
         if not self.started:
@@ -26,7 +25,7 @@ class ViewManager:
 
     async def send(self, target: Target, message: Message, **kwargs) -> None:
         if message.component is not None:
-            message.component.make_view(self.view)
+            message.component.make(self.view)
 
         if isinstance(target, Messageable):
             self.discord_message = await target.send(
@@ -71,7 +70,7 @@ class ViewManager:
             raise ValueError("This View has already started")
 
         if message.component is not None:
-            message.component.make_view(self.view)
+            message.component.make(self.view)
 
         self.discord_message = apply_message
         await self.discord_message.edit(
@@ -89,7 +88,6 @@ class ViewManager:
         async with self.update_lock:
             if self.message is None:
                 return
-            self.view = CustomView(self)
             kwargs = await self.message.update(message, self.view)
             await self.render(**kwargs)
 
@@ -105,5 +103,3 @@ class ViewManager:
             kwargs_ = kwargs
 
         await self.discord_message.edit(**kwargs_)
-        if kwargs.get("view", None) is None:
-            self.view = None
