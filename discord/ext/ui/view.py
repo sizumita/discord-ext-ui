@@ -109,7 +109,8 @@ class View(ui.View):
 
     async def setup(self) -> 'View':
         self._view_message = await self.body()
-        self._view_message.component.make(self)
+        if self._view_message.component is not None:
+            self._view_message.component.make(self)
 
         return self
 
