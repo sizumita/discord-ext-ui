@@ -144,7 +144,6 @@ class View(ui.View):
 
         object.__setattr__(self, key, value)
 
-    # legacy
     async def start(self, target: Target, **kwargs) -> None:
         """Send a Message to channel and attach View to it.
 
@@ -176,7 +175,6 @@ class View(ui.View):
             )
             self._target_type = TargetType.Webhook
 
-    # legacy
     async def apply(self, apply_message: discord.Message) -> None:
         """Attach View to apply_message.
 
