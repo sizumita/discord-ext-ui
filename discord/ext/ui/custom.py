@@ -92,4 +92,10 @@ class CustomSelect(ui.Select):
         if self.callback_func is None:
             return
         if self.check_func(interaction):
-            await _call_any(self.callback_func, interaction, interaction.data.get("values"))
+            selected_options = []
+            for label in interaction.data.get("values", []):
+                for option in self.options:
+                    if option.label == label:
+                        selected_options.append(option)
+                        continue
+            await _call_any(self.callback_func, interaction, selected_options)

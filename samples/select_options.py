@@ -12,8 +12,8 @@ class SampleView(View):
     def __init__(self, client):
         super().__init__(client)
 
-    async def select_animal(self, interaction: discord.Interaction, selected: List[str]) -> None:
-        if "cat" in selected:
+    async def select_animal(self, interaction: discord.Interaction, selected: List[discord.SelectOption]) -> None:
+        if "cat" in [i.label for i in selected]:
             await interaction.response.send_message("Oh! I like cat too!")
         else:
             await interaction.response.send_message("I see. I like cat.")
@@ -29,7 +29,7 @@ class SampleView(View):
                         SelectOption("cat"),
                         SelectOption("elephant"),
                         SelectOption("dug")
-                    ]).on_click(self.select_animal)
+                    ]).on_select(self.select_animal)
                     .max_values(4)
                 ]
             ])
