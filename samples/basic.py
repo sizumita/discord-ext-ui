@@ -54,7 +54,7 @@ class SampleView(View):
                     .style(discord.ButtonStyle.danger)
                 ]
             ])
-        ).on_appear(self.add_reaction)
+        )
 
 
 @bot.event

@@ -2,6 +2,7 @@ from typing import List, Any, TYPE_CHECKING, Callable, Optional, Union
 
 from discord import ui, PartialEmoji, ButtonStyle
 import discord
+from discord.utils import MISSING
 
 from .utils import _call_any
 
@@ -62,4 +63,33 @@ class CustomButton(ui.Button):
 
 
 class CustomSelect(ui.Select):
-    pass
+    def __init__(
+            self,
+            *,
+            custom_id: Optional[str],
+            placeholder: Optional[str] = None,
+            min_values: int = 1,
+            max_values: int = 1,
+            options: Optional[List[discord.SelectOption]],
+            row: Optional[int] = None,
+            callback: Optional[Callable] = None,
+            check_func: Callable[[discord.Interaction], bool]
+    ) -> None:
+        custom_id = custom_id or MISSING
+        options = options or MISSING
+        super(CustomSelect, self).__init__(
+            custom_id=custom_id,
+            placeholder=placeholder,
+            min_values=min_values,
+            max_values=max_values,
+            options=options,
+            row=row
+        )
+        self.callback_func = callback
+        self.check_func = check_func
+
+    async def callback(self, interaction: discord.Interaction) -> None:
+        if self.callback_func is None:
+            return
+        if self.check_func(interaction):
+            await _call_any(self.callback_func, interaction, interaction.data.get("values"))
