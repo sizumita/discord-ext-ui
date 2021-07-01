@@ -78,7 +78,7 @@ class SelectOption(Generic[C]):
         description: :class:`str`
             The description to set.
         """
-        self._value = description
+        self._description = description
         return self
 
     def emoji(self, emoji: Optional[Union[str, PartialEmoji]]) -> 'SelectOption':
