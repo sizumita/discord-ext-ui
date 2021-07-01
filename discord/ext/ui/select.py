@@ -55,7 +55,7 @@ class Select(Item, Generic[C]):
         self._row = row
         return self
 
-    def on_click(self, func: Callable) -> 'Select':
+    def on_select(self, func: Callable) -> 'Select':
         self.func = func
 
         return self
