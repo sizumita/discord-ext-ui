@@ -129,10 +129,10 @@ class View(ui.View):
     def _set_message(self, message: discord.Message) -> None:
         self._discord_message = message
 
-    async def _scheduled_task(self, state: Any, item: ui.Item, interaction: discord.Interaction) -> None:
+    async def _scheduled_task(self, item: ui.Item, interaction: discord.Interaction) -> None:
         if self._discord_message is None:
             self._set_message(interaction.message)
-        await super(View, self)._scheduled_task(state, item, interaction)
+        await super(View, self)._scheduled_task(item, interaction)
 
     def _raise_for_not_started(self) -> None:
         if not self.started.is_set():
