@@ -114,13 +114,13 @@ class View(ui.View):
 
         return self
 
-    def _start_listening(self, store: discord.ui.view.ViewStore) -> None:
+    def _start_listening_from_store(self, store: discord.ui.view.ViewStore) -> None:
         if not self.started.is_set():
             self._apply_listener()
             if self._view_message is not None:
                 self._state.loop.create_task(self._view_message.appear())
             self.started.set()
-        super(View, self)._start_listening(store)
+        super(View, self)._start_listening_from_store(store)
 
     def update_sync(self) -> None:
         if self._state is not None:
@@ -129,10 +129,10 @@ class View(ui.View):
     def _set_message(self, message: discord.Message) -> None:
         self._discord_message = message
 
-    async def _scheduled_task(self, state: Any, item: ui.Item, interaction: discord.Interaction) -> None:
+    async def _scheduled_task(self, item: ui.Item, interaction: discord.Interaction) -> None:
         if self._discord_message is None:
             self._set_message(interaction.message)
-        await super(View, self)._scheduled_task(state, item, interaction)
+        await super(View, self)._scheduled_task(item, interaction)
 
     def _raise_for_not_started(self) -> None:
         if not self.started.is_set():
