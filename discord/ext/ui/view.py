@@ -114,13 +114,13 @@ class View(ui.View):
 
         return self
 
-    def _start_listening(self, store: discord.ui.view.ViewStore) -> None:
+    def _start_listening_from_store(self, store: discord.ui.view.ViewStore) -> None:
         if not self.started.is_set():
             self._apply_listener()
             if self._view_message is not None:
                 self._state.loop.create_task(self._view_message.appear())
             self.started.set()
-        super(View, self)._start_listening(store)
+        super(View, self)._start_listening_from_store(store)
 
     def update_sync(self) -> None:
         if self._state is not None:
