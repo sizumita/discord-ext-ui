@@ -108,8 +108,8 @@ Example
     class SampleViewModel(ObservableObject):
         num = published('num')
 
-        def __init__(self, bot):
-            super().__init__(bot)
+        def __init__(self):
+            super().__init__()
             self.num = 0
 
         def countup(self):
@@ -122,7 +122,7 @@ Example
     class SampleView(View):
         def __init__(self, bot):
             super().__init__(bot)
-            self.view_model = SampleViewModel(bot)
+            self.view_model = SampleViewModel()
 
         async def add_reaction(self):
             await self.get_message().add_reaction("\U0001f44d")
