@@ -60,6 +60,10 @@ class Select(Item, Generic[C]):
 
         return self
 
+    def custom_id(self, custom_id: str) -> 'Select':
+        self._custom_id = custom_id
+        return self
+
     def check(self, func: Callable[[discord.Interaction], bool]) -> 'Select':
         self.check_func = func
         return self
