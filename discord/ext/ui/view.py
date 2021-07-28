@@ -28,10 +28,15 @@ class View(ui.View):
         pass
 
     def build(self) -> BuildResponse:
-        return dict(
+        build_response = dict(
             content=self._view_message.content,
-            embed=self._view_message.embed,
             view=self
+        )
+        if self._view_message.embed is None:
+            return build_response
+        return dict(
+            embed=self._view_message.embed,
+            **build_response
         )
 
     @property
