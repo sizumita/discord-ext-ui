@@ -21,6 +21,7 @@ class TargetType(Enum):
 Messageable = (
     discord.TextChannel,
     discord.GroupChannel,
+    discord.Thread,
     commands.Context,
     discord.DMChannel,
     discord.User,

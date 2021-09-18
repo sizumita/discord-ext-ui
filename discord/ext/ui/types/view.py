@@ -11,6 +11,7 @@ Target = Union[discord.abc.Messageable, discord.Interaction, discord.Webhook]
 Messageable = (
     discord.TextChannel,
     discord.GroupChannel,
+    discord.Thread,
     commands.Context,
     discord.DMChannel,
     discord.User,
