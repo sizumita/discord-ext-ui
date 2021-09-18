@@ -110,7 +110,10 @@ class View(ui.View):
             return
         message: Message = await self.body()
         kwargs = await self._view_message.update(message, self)
-        await self._discord_message.edit(**kwargs)
+        if isinstance(self._discord_message, discord.Interaction):
+            await self._discord_message.edit_original_message(**kwargs)
+        else:
+            await self._discord_message.edit(**kwargs)
 
     async def setup(self) -> 'View':
         self._view_message = await self.body()
@@ -164,6 +167,7 @@ class View(ui.View):
             kwargs_ = {}
             for k, v in kwargs.items():
                 kwargs_[k] = v if v is not None else discord.utils.MISSING
+            self._discord_message = target
             await target.response.send_message(
                 content=self._view_message.content,
                 embed=self._view_message.embed or discord.utils.MISSING,
