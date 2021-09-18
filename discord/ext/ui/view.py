@@ -161,10 +161,14 @@ class View(ui.View):
         if isinstance(target, Messageable):
             self._discord_message = await target.send(**self.build())
         elif isinstance(target, discord.Interaction):
+            kwargs_ = {}
+            for k, v in kwargs.items():
+                kwargs_[k] = v if v is not None else discord.utils.MISSING
             await target.response.send_message(
                 content=self._view_message.content,
                 embed=self._view_message.embed or discord.utils.MISSING,
-                view=self
+                view=self,
+                **kwargs_
             )
             self._target_type = TargetType.Interaction
         elif isinstance(target, discord.Webhook):
