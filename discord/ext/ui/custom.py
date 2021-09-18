@@ -71,9 +71,9 @@ class CustomSelect(ui.Select):
             return
         if self.check_func(interaction):
             selected_options = []
-            for label in interaction.data.get("values", []):
+            for value in interaction.data.get("values", []):
                 for option in self.options:
-                    if option.label == label:
+                    if option.value == value:
                         selected_options.append(option)
                         continue
             await _call_any(self.callback_func, interaction, selected_options)
