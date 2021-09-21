@@ -29,9 +29,6 @@ if version.endswith(('a', 'b', 'rc')):
     except Exception:
         pass
 
-readme = ''
-with open('README.rst') as f:
-    readme = f.read()
 
 test_requires = ['pytest>=6.2.4', 'mypy>=0.812', 'flake8>=3.9.2', 'tox']
 
@@ -40,7 +37,6 @@ setup(
     author='sizumita',
     url='https://github.com/sizumita/discord-ext-ui',
     version=version,
-    long_description=readme,
     long_description_content_type="text/x-rst",
     packages=['discord.ext.ui', 'discord.ext.ui.combine', 'discord.ext.ui.types'],
     license='MIT',
