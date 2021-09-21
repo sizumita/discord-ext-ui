@@ -20,9 +20,13 @@ class Component:
         i = 0
         for item in self.items:
             if not isinstance(item, list):
+                if item._hide:
+                    continue
                 view.add_item(item.to_discord())
                 continue
             for item_ in item:  # type: Item
                 setattr(item_, "_row", i)
+                if item_._hide:
+                    continue
                 view.add_item(item_.to_discord())
             i += 1

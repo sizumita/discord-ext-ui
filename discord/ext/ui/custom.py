@@ -14,6 +14,7 @@ class CustomButton(ui.Button):
             style: ButtonStyle,
             label: str,
             disabled: bool = False,
+            hide: bool = False,
             custom_id: Optional[str] = None,
             url: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
@@ -30,6 +31,7 @@ class CustomButton(ui.Button):
             emoji=emoji,
             row=row
         )
+        self.hide: bool = hide
         self.callback_func: Optional[Callable] = callback
         self.check_func: Callable[[discord.Interaction], bool] = check_func
 
@@ -50,6 +52,7 @@ class CustomSelect(ui.Select):
             max_values: int = 1,
             options: Optional[List[discord.SelectOption]],
             disabled: bool = False,
+            hide: bool = False,
             row: Optional[int] = None,
             callback: Optional[Callable] = None,
             check_func: Callable[[discord.Interaction], bool]
@@ -65,6 +68,7 @@ class CustomSelect(ui.Select):
             disabled=disabled,
             row=row
         )
+        self.hide: bool = hide
         self.callback_func = callback
         self.check_func = check_func
 

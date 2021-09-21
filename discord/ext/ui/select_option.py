@@ -15,6 +15,7 @@ class SelectOption(Generic[C]):
             description: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
             default: bool = False,
+            hide: bool = False,
             cls: C = discord.SelectOption
     ) -> None:
         self._label: str = label
@@ -26,6 +27,7 @@ class SelectOption(Generic[C]):
 
         self._emoji: Optional[str] = emoji
         self._default: bool = default
+        self._hide: bool = hide
 
         self.cls: C = cls
 
@@ -114,11 +116,15 @@ class SelectOption(Generic[C]):
         self._default = default
         return self
 
+    def hide(self, hide: bool) -> 'SelectOption':
+        self._hide = hide
+        return self
+
     def to_discord_select_option(self) -> C:
         return self.cls(
             label=self._label,
             value=self._value,
             description=self._description,
             emoji=self._emoji,
-            default=self._default
+            default=self._default,
         )

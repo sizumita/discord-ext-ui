@@ -22,6 +22,7 @@ class Select(Item, Generic[C]):
             max_values: int = 1,
             options: Optional[list] = None,
             disabled: bool = False,
+            hide: bool = False,
             cls: C = CustomSelect,
             custom_id: Optional[str] = None,
     ) -> None:
@@ -30,6 +31,7 @@ class Select(Item, Generic[C]):
         self._max_values: int = max_values
         self._options: list = [] if options is None else options
         self._disabled: bool = disabled
+        self._hide: bool = hide
         self._row: Optional[int] = None
         self.cls: C = cls
         self._custom_id: Optional[str] = custom_id
@@ -57,6 +59,10 @@ class Select(Item, Generic[C]):
         self._disabled = disabled
         return self
 
+    def hide(self, hide: bool = False) -> 'Select':
+        self._hide = hide
+        return self
+
     def row(self, row: int) -> 'Select':
         self._row = row
         return self
@@ -79,8 +85,9 @@ class Select(Item, Generic[C]):
             placeholder=self._placeholder,
             min_values=self._min_values,
             max_values=self._max_values,
-            options=[o.to_discord_select_option() for o in self._options],
+            options=[o.to_discord_select_option() for o in self._options if not o._hide],
             disabled=self._disabled,
+            hide=self._hide,
             row=self._row,
             custom_id=self._custom_id,
             check_func=self.check_func,

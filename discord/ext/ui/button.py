@@ -20,6 +20,7 @@ class Button(Item, Generic[C]):
             label: str = "",
             style: ButtonStyle = ButtonStyle.primary,
             disabled: bool = False,
+            hide: bool = False,
             url: Optional[str] = None,
             emoji: Optional[Union[str, PartialEmoji]] = None,
             custom_id: Optional[str] = None,
@@ -28,6 +29,7 @@ class Button(Item, Generic[C]):
         self._style: ButtonStyle = style
         self._label: str = label
         self._disabled: bool = disabled
+        self._hide: bool = hide
         self._url: Optional[str] = url
         self._emoji: Optional[Union[str, PartialEmoji]] = emoji
         self._custom_id: Optional[str] = custom_id
@@ -49,6 +51,7 @@ class Button(Item, Generic[C]):
             style=self._style,
             label=self._label,
             disabled=self._disabled,
+            hide=self._hide,
             url=self._url,
             emoji=self._emoji,
             row=self._row,
@@ -62,6 +65,7 @@ class Button(Item, Generic[C]):
             'style': self._style,
             'label': self._label,
             'disabled': self._disabled,
+            'hide': self._hide,
             'emoji': self._emoji,
             'row': self._row,
             'callback': id(self.func),
@@ -84,6 +88,10 @@ class Button(Item, Generic[C]):
 
     def disabled(self, disabled: bool = False) -> 'Button':
         self._disabled = disabled
+        return self
+
+    def hide(self, hide: bool = False) -> 'Button':
+        self._hide = hide
         return self
 
     def url(self, url: str) -> 'Button':
