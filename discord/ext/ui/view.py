@@ -1,15 +1,18 @@
-from typing import Optional, TYPE_CHECKING
+import asyncio
+from typing import Optional, TYPE_CHECKING, Any
 
 from .message import Message
 from .button import LinkButton
+from .observable_object import ObservableObject
 
 if TYPE_CHECKING:
     from .tracker import ViewTracker
 
 
 class View:
-    def __init__(self):
+    def __init__(self, loop: Optional[asyncio.BaseEventLoop] = None):
         self._tracker: Optional['ViewTracker'] = None
+        self.loop = loop or asyncio.get_event_loop()
 
     async def body(self) -> Message:
         return Message()\
@@ -34,3 +37,13 @@ class View:
 
     def stop(self):
         self._tracker.stop()
+
+    def update_sync(self):
+        if self._tracker is not None:
+            self.loop.create_task(self._tracker.update())
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if isinstance(value, ObservableObject):
+            value.view = self
+
+        object.__setattr__(self, key, value)

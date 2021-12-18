@@ -1,4 +1,5 @@
 from discord.ext.ui import Button, View, ObservableObject, published, Message, ViewTracker, MessageProvider
+from discord.ext.ui.combine import PassThroughSubject
 from discord.ext import commands
 import discord
 import os
@@ -13,12 +14,10 @@ class SampleViewModel(ObservableObject):
     def __init__(self):
         super().__init__()
         self.num = 0
+        self.sub = PassThroughSubject().sink(self.change_count)
 
-    def countup(self):
-        self.num += 1
-
-    def countdown(self):
-        self.num -= 1
+    def change_count(self, diff: int):
+        self.num += diff
 
 
 class SampleView(View):
@@ -28,7 +27,7 @@ class SampleView(View):
 
     async def delete(self, interaction: discord.Interaction):
         await interaction.message.delete()
-        await self.stop()
+        self.stop()
 
     async def body(self):
         return Message()\
@@ -36,11 +35,11 @@ class SampleView(View):
             .items([
             [
                 Button("+1")
-                    .on_click(lambda x: self.viewModel.countup())
+                    .on_click(lambda _: self.viewModel.sub.send(1))
                     .style(discord.ButtonStyle.blurple),
 
                 Button("-1")
-                    .on_click(lambda x: self.viewModel.countdown())
+                    .on_click(lambda _: self.viewModel.sub.send(-1))
                     .style(discord.ButtonStyle.blurple)
             ],
             [
