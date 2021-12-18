@@ -45,3 +45,8 @@ class Message:
                 items.append(component.to_discord_item(None))
 
         return items
+
+    def __eq__(self, other: Message) -> bool:
+        return self.components_ == other.components_\
+               and self.embeds_ == other.embeds_\
+               and self.content_ == other.content_

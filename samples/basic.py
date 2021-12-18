@@ -1,4 +1,4 @@
-from discord.ext.ui import Component, Button, View, ObservableObject, published, Message
+from discord.ext.ui import Button, View, ObservableObject, published, Message, ViewTracker, MessageProvider
 from discord.ext import commands
 import discord
 import os
@@ -22,49 +22,43 @@ class SampleViewModel(ObservableObject):
 
 
 class SampleView(View):
-    def __init__(self, client):
-        super().__init__(client)
+    def __init__(self):
+        super().__init__()
         self.viewModel = SampleViewModel()
 
     async def delete(self, interaction: discord.Interaction):
         await interaction.message.delete()
         await self.stop()
 
-    @View.listen(name="on_reaction_add")
-    async def watch_reaction_add(self, reaction: discord.Reaction, user: discord.User):
-        if reaction.message == self._discord_message \
-                and str(reaction.emoji) == "\U0001f44d":
-            self.viewModel.countup()
-
     async def body(self):
-        return Message(
-            content=f"test! {self.viewModel.num}",
-            component=Component(items=[
-                [
-                    Button("+1")
+        return Message()\
+            .content(f"test! {self.viewModel.num}")\
+            .items([
+            [
+                Button("+1")
                     .on_click(lambda x: self.viewModel.countup())
                     .style(discord.ButtonStyle.blurple),
 
-                    Button("-1")
+                Button("-1")
                     .on_click(lambda x: self.viewModel.countdown())
                     .style(discord.ButtonStyle.blurple)
-                ],
-                [
-                    Button("終わる")
+            ],
+            [
+                Button("終わる")
                     .on_click(self.delete)
                     .style(discord.ButtonStyle.danger)
-                ]
-            ])
-        )
+            ]
+        ])
 
 
 @bot.event
-async def on_message(message):
+async def on_message(message: discord.Message):
     if message.content != "!test":
         return
 
-    view = await SampleView(bot).setup()
-    await message.channel.send(**view.build())
+    view = SampleView()
+    tracker = ViewTracker(view, timeout=None)
+    await tracker.track(MessageProvider(message.channel))
 
 
 bot.run(os.environ["DISCORD_BOT_TOKEN"])
