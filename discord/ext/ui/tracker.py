@@ -26,7 +26,7 @@ class ViewTracker(ui.View):
         self.body = await self.view.body()
         for item in self.body.get_discord_items():
             self.add_item(item)
-        self.message = await provider.send_message(self.body.content_, self.body.embeds_, self)
+        self.message = await provider.send_message(self.body._content, self.body._embeds, self)
         self.view._tracker = self
         self.provider = provider
         await self.view.on_appear()
@@ -38,5 +38,5 @@ class ViewTracker(ui.View):
             self.clear_items()
             for item in self.body.get_discord_items():
                 self.add_item(item)
-            await self.provider.edit_message(self.body.content_, self.body.embeds_, self)
+            await self.provider.edit_message(self.body._content, self.body._embeds, self)
             await self.view.on_update()

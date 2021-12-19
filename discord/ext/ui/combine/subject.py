@@ -5,7 +5,8 @@ from .publisher import Publisher
 
 
 class Subject(Publisher):
-    pass
+    def send(self, value: Any) -> None:
+        self.downstream(value)
 
 
 class PassThroughSubject(Subject):

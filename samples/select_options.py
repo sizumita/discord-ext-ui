@@ -1,6 +1,6 @@
 from typing import List
 
-from discord.ext.ui import Component, View, Message, Select, SelectOption
+from discord.ext.ui import View, Message, Select, SelectOption, ViewTracker, MessageProvider
 from discord.ext import commands
 import discord
 import os
@@ -9,8 +9,8 @@ bot = commands.Bot("!")
 
 
 class SampleView(View):
-    def __init__(self, client):
-        super().__init__(client)
+    def __init__(self, client: discord.Client):
+        super().__init__(client.loop)
 
     async def select_animal(self, interaction: discord.Interaction, selected: List[discord.SelectOption]) -> None:
         if "cat" in [i.label for i in selected]:
@@ -20,19 +20,19 @@ class SampleView(View):
 
     async def body(self):
         return Message(
-            content=f"select your favorite animals!",
-            component=Component(items=[
+            f"select your favorite animals!",
+            components=[
                 [
                     Select()
-                    .options([
+                        .options([
                         SelectOption("dog"),
                         SelectOption("cat"),
                         SelectOption("elephant"),
                         SelectOption("dug")
                     ]).on_select(self.select_animal)
-                    .max_values(4)
+                        .max_values(4)
                 ]
-            ])
+            ]
         )
 
 
@@ -41,8 +41,9 @@ async def on_message(message):
     if message.content != "!test":
         return
 
-    view = await SampleView(bot).setup()
-    await message.channel.send(**view.build())
+    view = SampleView(bot)
+    tracker = ViewTracker(view, timeout=None)
+    await tracker.track(MessageProvider(message.channel))
 
 
 bot.run(os.environ["DISCORD_BOT_TOKEN"])

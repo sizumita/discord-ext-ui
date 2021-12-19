@@ -1,17 +1,17 @@
 from __future__ import annotations
 
 
-from typing import Any, Callable, TypeVar, Generic, Optional
+from typing import Any, Callable, Optional
 
 
 class Publisher:
     def __init__(self):
-        self.children: Optional[Publisher] = None
+        self.child: Optional[Publisher] = None
         self.parent: Optional[Publisher] = None
         self.subscribers: list[Callable[[Any], None]] = []
 
     def set_child(self, child: Publisher) -> Publisher:
-        self.children = child
+        self.child = child
         return self
 
     def chain(self, new_publisher: Publisher) -> Publisher:
@@ -34,8 +34,8 @@ class Publisher:
         :param value:
         :return:
         """
-        if self.children is not None:
-            self.children.upstream(value)
+        if self.child is not None:
+            self.child.upstream(value)
 
         for func in self.subscribers:
             func(value)
@@ -48,18 +48,21 @@ class Publisher:
         if self.parent is not None:
             self.parent.dispatch()
 
-    def send(self, value: Any) -> None:
-        self.downstream(value)
-
     def sink(self, func: Callable[[Any], None]) -> Publisher:
+        if self.child is not None:
+            self.child.sink(func)
+            return self
         self.subscribers.append(func)
         self.dispatch()
         return self
 
     def map(self, func: Callable[[Any], Any]) -> Publisher:
+        if self.child is not None:
+            self.child.map(func)
+            return self
         new_publisher = MapPublisher(func)
         self.chain(new_publisher)
-        return new_publisher
+        return self
 
 
 class MapPublisher(Publisher):

@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class View:
-    def __init__(self, loop: Optional[asyncio.BaseEventLoop] = None):
+    def __init__(self, loop: Optional[asyncio.AbstractEventLoop] = None):
         self._tracker: Optional['ViewTracker'] = None
         self.loop = loop or asyncio.get_event_loop()
 
@@ -27,6 +27,9 @@ class View:
         pass
 
     async def on_disappear(self) -> None:
+        """
+        Viewがstopされた際に送信されます。
+        """
         pass
 
     async def on_update(self) -> None:
@@ -37,6 +40,7 @@ class View:
 
     def stop(self):
         self._tracker.stop()
+        self.loop.create_task(self.on_disappear())
 
     def update_sync(self):
         if self._tracker is not None:
