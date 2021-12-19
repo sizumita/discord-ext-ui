@@ -45,7 +45,7 @@ class ViewModel(ObservableObject):
 
     async def fetch_articles(self):
         await self._article_request.fetch()\
-            .sink(lambda x: setattr(self, "articles", x))
+            .sink(lambda x: self.articles.extend(x))
         self.is_loading = False
 
 
