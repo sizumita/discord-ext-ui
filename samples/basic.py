@@ -13,7 +13,8 @@ class SampleViewModel(ObservableObject):
     def __init__(self):
         super().__init__()
         self.num = 0
-        self.sub = PassThroughSubject().sink(self.change_count)
+        self.sub = PassThroughSubject()
+        self.sub.sink(self.change_count)
 
     def change_count(self, diff: int):
         self.num += diff
