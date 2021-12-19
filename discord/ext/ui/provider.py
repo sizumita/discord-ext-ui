@@ -23,7 +23,6 @@ class MessageProvider(BaseProvider):
 
     async def send_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.Message:
         self.message = await self.channel.send(content, embeds=embeds, view=view)
-        print(self.message)
         return self.message
 
     async def edit_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.Message:

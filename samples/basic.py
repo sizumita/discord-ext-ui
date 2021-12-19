@@ -1,11 +1,10 @@
 from discord.ext.ui import Button, View, ObservableObject, published, Message, ViewTracker, MessageProvider
 from discord.ext.ui.combine import PassThroughSubject
-from discord.ext import commands
 import discord
 import os
 
 
-bot = commands.Bot("!")
+client = discord.Client()
 
 
 class SampleViewModel(ObservableObject):
@@ -50,7 +49,7 @@ class SampleView(View):
         ])
 
 
-@bot.event
+@client.event
 async def on_message(message: discord.Message):
     if message.content != "!test":
         return
@@ -60,4 +59,4 @@ async def on_message(message: discord.Message):
     await tracker.track(MessageProvider(message.channel))
 
 
-bot.run(os.environ["DISCORD_BOT_TOKEN"])
+client.run(os.environ["DISCORD_BOT_TOKEN"])

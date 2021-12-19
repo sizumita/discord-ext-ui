@@ -96,11 +96,11 @@ Example
 =======
 
 .. code-block:: python
-
-    from discord.ext.ui import Component, Button, View, ObservableObject, published, Message
-    from discord.ext import commands
+    from discord.ext.ui import Button, View, ObservableObject, published, Message, ViewTracker, MessageProvider
+    from discord.ext.ui.combine import PassThroughSubject
     import discord
     import os
+
 
     client = discord.Client()
 
@@ -111,41 +111,47 @@ Example
         def __init__(self):
             super().__init__()
             self.num = 0
+            self.sub = PassThroughSubject().sink(self.change_count)
 
-        def countup(self):
-            self.num += 1
-
-        def countdown(self):
-            self.num -= 1
+        def change_count(self, diff: int):
+            self.num += diff
 
 
     class SampleView(View):
-        def __init__(self, bot):
-            super().__init__(bot)
-            self.view_model = SampleViewModel()
+        def __init__(self):
+            super().__init__()
+            self.viewModel = SampleViewModel()
 
-        async def add_reaction(self):
-            await self.get_message().add_reaction("\U0001f44d")
+        async def delete(self, interaction: discord.Interaction):
+            await interaction.message.delete()
+            self.stop()
 
         async def body(self):
-            return Message(
-                content=f"test! {self.view_model.num}",
-                component=Component(items=[
-                    [
-                        Button("+1")
-                            .on_click(lambda x: self.view_model.countup())
-                            .style(discord.ButtonStyle.blurple),
+            return Message()\
+                .content(f"test! {self.viewModel.num}")\
+                .items([
+                [
+                    Button("+1")
+                        .on_click(lambda _: self.viewModel.sub.send(1))
+                        .style(discord.ButtonStyle.blurple),
 
-                        Button("-1")
-                            .on_click(lambda x: self.view_model.countdown())
-                            .style(discord.ButtonStyle.blurple)
-                    ]
-                ])
-            )
+                    Button("-1")
+                        .on_click(lambda _: self.viewModel.sub.send(-1))
+                        .style(discord.ButtonStyle.blurple)
+                ],
+                [
+                    Button("終わる")
+                        .on_click(self.delete)
+                        .style(discord.ButtonStyle.danger)
+                ]
+            ])
 
 
     @client.event
-    async def on_message(message):
+    async def on_message(message: discord.Message):
         if message.content != "!test":
             return
-        await SampleView(client).start(message.channel)
+
+        view = SampleView()
+        tracker = ViewTracker(view, timeout=None)
+        await tracker.track(MessageProvider(message.channel))
