@@ -40,3 +40,7 @@ class ViewTracker(ui.View):
                 self.add_item(item)
             await self.provider.edit_message(self.body._content, self.body._embeds, self)
             await self.view.on_update()
+
+    async def _scheduled_task(self, item: ui.Item, interaction: discord.Interaction):
+        self.provider.update_interaction(interaction)
+        return await super(ViewTracker, self)._scheduled_task(item, interaction)
