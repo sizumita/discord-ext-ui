@@ -24,6 +24,9 @@ class ViewTracker(ui.View):
 
     async def track(self, provider: BaseProvider):
         self.body = await self.view.body()
+        while not isinstance(self.body, Message):
+            self.body = await self.body.body()
+
         for item in self.body.get_discord_items():
             self.add_item(item)
         self.message = await provider.send_message(self.body._content, self.body._embeds, self)
@@ -33,6 +36,9 @@ class ViewTracker(ui.View):
 
     async def update(self):
         body = await self.view.body()
+        while not isinstance(body, Message):
+            body = await body.body()
+
         if self.body != body:
             self.body = body
             self.clear_items()

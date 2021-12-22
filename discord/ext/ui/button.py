@@ -15,7 +15,9 @@ class LinkButton(Item):
         self.label = label
 
     def to_discord_item(self, row: Optional[int]) -> ui.Item:
-        return ui.Button(style=discord.ButtonStyle.link, label=self.label, url=self.url)
+        button = ui.Button(style=discord.ButtonStyle.link, label=self.label, url=self.url)
+        button.row = row
+        return button
 
 
 class Button(Item):
@@ -84,4 +86,5 @@ class Button(Item):
         )
         button.check_func = self.check_func
         button.callback_func = self.callback_func
+        button.row = row
         return button

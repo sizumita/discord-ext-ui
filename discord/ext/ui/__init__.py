@@ -8,6 +8,8 @@ from .observable_object import ObservableObject
 from .state import state
 from .published import published
 from .select import SelectOption, Select
+from .page import PaginationView, PaginationButtons
+
 
 __title__ = 'discord.ext.ui'
 __author__ = 'sizumita'

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import asyncio
 from typing import Optional, TYPE_CHECKING, Any
 
@@ -14,7 +16,7 @@ class View:
         self._tracker: Optional['ViewTracker'] = None
         self.loop = loop or asyncio.get_event_loop()
 
-    async def body(self) -> Message:
+    async def body(self) -> Message | View:
         return Message()\
             .content("Hello World!\n\ncreated by discord-ext-ui from @sizumita")\
             .item(LinkButton("https://twitter.com/sizumita", "Twitter @sizumita"))\

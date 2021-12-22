@@ -28,6 +28,7 @@ class CustomButton(ui.Button):
                 return
         await _call_any(self.callback_func, interaction)
 
+
 class CustomSelect(ui.Select):
     def __init__(
             self,
