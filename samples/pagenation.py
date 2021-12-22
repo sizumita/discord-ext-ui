@@ -12,8 +12,11 @@ class Page(PageView):
         super(Page, self).__init__()
         self.content = content
 
-    async def body(self, _paginator) -> Message | View:
+    async def body(self, _paginator: PaginationView) -> Message | View:
         return Message(self.content)
+
+    async def on_appear(self, paginator: PaginationView) -> None:
+        print(f"appeared page: {paginator.page}")
 
 
 @client.event

@@ -17,7 +17,7 @@ class PaginationButtons:
         return Button("<").style(discord.ButtonStyle.green).disabled(now == 0)
 
     def indicator(self, now: int, last_page: int):
-        return Button(f"{now}/{last_page}").style(discord.ButtonStyle.gray).disabled(True)
+        return Button(f"{now+1}/{last_page+1}").style(discord.ButtonStyle.gray).disabled(True)
 
     def next(self, now: int, last_page: int) -> Button:
         return Button(">").style(discord.ButtonStyle.green).disabled(now == last_page)
@@ -31,12 +31,13 @@ class PaginationView(View):
 
     def __init__(
             self,
-            views: list[PageView],
+            views: list[PageView] | PageView,
             *,
             show_buttons: bool = True,
             show_disabled: bool = False,
             show_indicator: bool = True,
             check: Optional[Callable[[discord.Interaction], bool]] = None,
+            first_page: int = 0,
             cls: Type[PaginationButtons] = PaginationButtons
     ):
         super(PaginationView, self).__init__()
@@ -46,7 +47,7 @@ class PaginationView(View):
         self.show_indicator = show_indicator
         self.check = check
 
-        self.page = 0  # 0始まり
+        self.page = first_page  # index 0始まり
         self.max_page = len(self._views) - 1
         self.button_gen = cls()
 
@@ -56,7 +57,7 @@ class PaginationView(View):
         self.page = page
 
     async def body(self) -> Message | View:
-        view = self._views[self.page]
+        view = self._views[self.page] if isinstance(self._views, list) else self._views
         buttons = []
         first = self.button_gen.first(self.page, self.max_page)
         if not (not self.show_disabled and getattr(first, "_disabled", False)):
@@ -78,6 +79,7 @@ class PaginationView(View):
         if not (not self.show_disabled and getattr(last, "_disabled", False)):
             buttons.append(last.on_click(lambda x: self.change_page(x, self.max_page)))
 
+        await view.on_appear(self)
         body = await view.body(self)
         body.items([buttons])
 
@@ -87,3 +89,12 @@ class PaginationView(View):
 class PageView(View):
     async def body(self, paginator: PaginationView) -> Message | View:
         return await super(PageView, self).body()
+
+    async def on_appear(self, paginator: PaginationView) -> None:
+        """
+        ページが表示される前に実行されます。
+        一つのPageViewだけをPaginationViewに登録していた場合でも、ページが変更されるごとに毎回実行されます。
+        :param paginator:
+        :return:
+        """
+        pass
