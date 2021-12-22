@@ -95,7 +95,9 @@ ObservableObjectのpublished propertyにした値が変更されたとき、View
 Example
 =======
 
-.. code-block:: python
+`./examples/` をご覧ください。
+
+.. code-block::python
     from discord.ext.ui import Button, View, ObservableObject, published, Message, ViewTracker, MessageProvider
     from discord.ext.ui.combine import PassThroughSubject
     import discord
