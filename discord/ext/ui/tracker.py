@@ -20,12 +20,10 @@ class ViewTracker(ui.View):
         self.message: Optional[discord.Message] = None
         self.provider: Optional[BaseProvider] = None
 
-        self.stop_wait = asyncio.Event()
-
     async def track(self, provider: BaseProvider):
         self.body = await self.view.body()
         while not isinstance(self.body, Message):
-            self.body = await self.body.body()
+            self.body = await self.body.before_body()
 
         for item in self.body.get_discord_items():
             self.add_item(item)
