@@ -1,5 +1,5 @@
 from __future__ import annotations
-from discord.ext.ui import View, ViewTracker, Message, PaginationView, MessageProvider
+from discord.ext.ui import View, ViewTracker, Message, PaginationView, MessageProvider, PageView
 import discord
 import os
 
@@ -7,12 +7,12 @@ import os
 client = discord.Client()
 
 
-class Page(View):
+class Page(PageView):
     def __init__(self, content: str):
         super(Page, self).__init__()
         self.content = content
 
-    async def body(self) -> Message | View:
+    async def body(self, _paginator) -> Message | View:
         return Message(self.content)
 
 

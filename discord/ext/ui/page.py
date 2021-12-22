@@ -31,7 +31,7 @@ class PaginationView(View):
 
     def __init__(
             self,
-            views: list[View],
+            views: list[PageView],
             *,
             show_buttons: bool = True,
             show_disabled: bool = False,
@@ -40,14 +40,14 @@ class PaginationView(View):
             cls: Type[PaginationButtons] = PaginationButtons
     ):
         super(PaginationView, self).__init__()
-        self.views = views
+        self._views = views
         self.show_buttons = show_buttons
         self.show_disabled = show_disabled,
         self.show_indicator = show_indicator
         self.check = check
 
         self.page = 0  # 0始まり
-        self.max_page = len(self.views) - 1
+        self.max_page = len(self._views) - 1
         self.button_gen = cls()
 
     def change_page(self, interaction: discord.Interaction, page: int):
@@ -56,7 +56,7 @@ class PaginationView(View):
         self.page = page
 
     async def body(self) -> Message | View:
-        view = self.views[self.page]
+        view = self._views[self.page]
         buttons = []
         first = self.button_gen.first(self.page, self.max_page)
         if not (not self.show_disabled and getattr(first, "_disabled", False)):
@@ -78,7 +78,12 @@ class PaginationView(View):
         if not (not self.show_disabled and getattr(last, "_disabled", False)):
             buttons.append(last.on_click(lambda x: self.change_page(x, self.max_page)))
 
-        body = await view.body()
+        body = await view.body(self)
         body.items([buttons])
 
         return body
+
+
+class PageView(View):
+    async def body(self, paginator: PaginationView) -> Message | View:
+        return await super(PageView, self).body()

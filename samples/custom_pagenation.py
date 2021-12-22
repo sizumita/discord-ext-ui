@@ -1,5 +1,5 @@
 from __future__ import annotations
-from discord.ext.ui import View, ViewTracker, Message, PaginationView, MessageProvider, LinkButton, PaginationButtons, Button
+from discord.ext.ui import View, ViewTracker, Message, PaginationView, MessageProvider, LinkButton, PaginationButtons, Button, PageView
 import discord
 import os
 
@@ -7,13 +7,13 @@ import os
 client = discord.Client()
 
 
-class Page(View):
+class Page(PageView):
     def __init__(self, content: str, button: LinkButton):
         super(Page, self).__init__()
         self.content = content
         self.button = button
 
-    async def body(self) -> Message | View:
+    async def body(self, _paginator) -> Message | View:
         return Message(self.content).item([self.button])
 
 
