@@ -5,3 +5,13 @@
 # 2.0.2
 
 - Viewの挙動を最適化
+
+# 3.0.0
+
+- ViewをViewとViewTrackerに分離
+- Messageの構造を変更
+
+# 3.1.0
+
+- Alertを追加
+- PaginationViewを追加
