@@ -15,3 +15,7 @@
 
 - Alertを追加
 - PaginationViewを追加
+
+# 3.1.1
+
+- 軽微なバグを修正

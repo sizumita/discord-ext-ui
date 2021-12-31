@@ -8,32 +8,29 @@ $ pip install discord-ext-ui
 
 ```python
 import discord
-from discord.ext.ui import View, Message, Component, Button
+from discord.ext.ui import View, Message, Button, MessageProvider, ViewTracker
 
 
 class MyView(View):
     async def body(self):
         return Message(
             content="here is content",
-            component=Component(
-                items=[
-                    Button("love gura"),
-                    Button("love nizisanzi")
-                    .emoji("🌈")
-                    .disabled(True),
-                    Button("print a")
-                    .style(discord.ButtonStyle.secondary)
-                    .on_click(lambda x: print("a"))
-                ]
-            )
-        ).on_appear(lambda: print("appear view"))\
-        .on_disappear(lambda: print("disappear view"))
+            components=[
+                Button("love gura"),
+                Button("love nizisanzi")
+                .emoji("🌈")
+                .disabled(True),
+                Button("print a")
+                .style(discord.ButtonStyle.secondary)
+                .on_click(lambda x: print("a"))
+            ]
+        )
 
 client = discord.Client()
 
 ...
 
-await MyView(client).start(some_text_channel)
+await ViewTracker(MyView()).track(MessageProvider(channel))
 
 ```
 
@@ -42,7 +39,7 @@ discord.ext.uiのViewクラスを継承したクラスを作り、body関数でM
 Messageにはcontent、embed、componentを渡すことができます。
 contentとembedはdiscord.Messageable.sendの仕様と同じです。
 
-ComponentのitemsにはButton(将来的にはselectも)を渡すことができます。
+ComponentのitemsにはButtonとSelectを渡すことができます。
 
 Buttonクラスにはdiscord.ui.Buttonに渡せる情報が渡せます。
 この時、initに引数として渡すのと、関数に渡すのと、二つの方法を使うことができます。
@@ -56,9 +53,6 @@ on_click関数に関数を渡すと、
 itemsに`list[Button, Button]`を渡すと、ボタンが５個詰めで並びます。
 `list[list[Button],list[Button]]`を渡すと、段が分けられます。各段には５個までボタンを配置できます。
 
-Messageにはon_appear,on_disappearが存在し、これらはそれぞれView.start関数、View.stop関数が実行された際に呼び出されます。
-引数なしの関数またはコルーチン関数を渡してください。
-
 ## state
 
 discord-ext-uiはstateと言うプロパティを提供します。これを使っている変数が変更されたときに、自動でViewが更新されます。
@@ -66,8 +60,7 @@ discord-ext-uiはstateと言うプロパティを提供します。これを使�
 ```python
 class MyView(View):
     something = state('something')
-    def __init__(self, bot):
-        super(MyView, self).__init__(bot)
+    def __init__(self):
         self.something = "what happened!?"
 
     def update_something(self):
@@ -76,24 +69,13 @@ class MyView(View):
     async def body(self):
         return Message(
             content=self.something,
-            component=Component(items=[Button("show").on_click(self.update_something)])
+            component=[Button("show").on_click(self.update_something)]
         )
 ```
 
 showと言うボタンが押されたとき、self.somethingが変更されます。このとき、自動でviewが更新されます。
 
 ## discord.ext.commands.Botを使った際に使える機能
-
-### discordのイベントリスナー
-
-commands.Cog.listener()デコレータと同じように、デコレーターを使ってdiscordのイベントを受け取ることができます:
-
-```python
-class MyView(View):
-    @View.listen()
-    async def on_message(self, message):
-        ...
-```
 
 ## ObservableObject
 
