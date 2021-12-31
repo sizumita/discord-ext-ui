@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import Any, TypeVar
 
 from .observable_object import ObservableObject
