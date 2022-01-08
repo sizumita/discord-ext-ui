@@ -30,6 +30,7 @@ class ViewTracker(ui.View):
         self.view._tracker = self
         self.provider = provider
         await self.view.on_appear()
+        return self.message
 
     async def update(self):
         body = await self.view.body()
