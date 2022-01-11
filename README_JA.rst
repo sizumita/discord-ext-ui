@@ -11,42 +11,38 @@ discord-ext-ui
    :target: https://pypi.python.org/pypi/discord-ext-ui
    :alt: PyPI supported Python versions
 
-This package is an extension of discord.ui.
+このパッケージはdiscord.uiの拡張です。
 
-You can use pycord or discord.py.
-
-I hate pycord's slash command system.
-
-why use discord-ext-ui?
+why use discord-ext-ui ? なぜdiscord-ext-uiを使うのか?
 =============================
 
-discord-ext-ui comes with a declarative View system and Combine system similar to SwiftUI.
+discord-ext-uiは、SwiftUIに似た宣言的Viewシステム・Combineシステムを搭載しています。
 
-This makes it easier to implement architectures such as MVVM and to edit buttons after they have been submitted.
+これにより、MVVMなどのアーキテクチャを実装したり、送信した後のボタンの編集が容易になります。
 
-Advantages of adopting discord-ext-ui
+discord-ext-uiを採用する利点
 -----------------------------
 
-1. no more need to explicitly update the message
+1.	メッセージの更新を明示的に行う必要がなくなる
 
-As an example, let's say you want to implement a function that allows you to increase or decrease the count using a button.
+例として、ボタンを使ってカウントを増やしたり減らしたりできるような機能を実装するとしましょう。
 
-If you want to implement it without using MVVM, you need to explicitly write a process to update the message to reflect the change in the internal state when the button is pressed.
+MVVMを用いらずに実装する場合、ボタンの押下時に内部状態が変更された際にその状態を反映してメッセージの更新を行う処理を明示的に記述する必要があります。
 
-On the other hand, discord-ext-ui provides wrappers for variables such as `state` and `published`. By using this wrapper, it is not necessary to explicitly write message updates according to changes in member variables.
+対して、discord-ext-uiでは、 `state` や `published` といった変数のラッパーを提供します。このラッパーを使用することで、メンバ変数の変更に応じてメッセージの更新を明示的に書く必要がなくなります。
 
-Also, since the function to be executed when the button is pressed can be set declaratively, it is possible to perform complex processing such as for loops. 2.
+また、ボタンが押されたときに実行される関数を宣言的に設定できるので、forループ等の複雑な処理を行うことも可能です。
 
-2. easy to write when a button is used
+2.	ボタンを使った時の処理が書きやすい
 
-Button support has been available since discord.py 2.0, but the standard button support mechanism in discord.py has some problems such as difficulty in changing buttons in the middle of the process.
+discord.py 2.0からボタンの対応が始まりましたが、discord.py標準のボタン対応の仕組みでは、途中でボタンの変更などがし辛いなどの問題があります。
 
-With discord-ext-ui, it is possible to change buttons when updating automatically, so it is easy to implement disabling/enabling according to instance variable values and changing buttons according to internal states such as pagination.
+discord-ext-uiを使えば、自動で更新する際にボタンの変更も可能なので、インスタンス変数の値に応じた無効化・有効化や、ペジネーション等の内部状態に応じたボタンの変更処理も簡単に実装することができます。
 
 Example
 =======
 
-See `./examples/`.
+`./examples/` をご覧ください。
 
 .. code-block::python
     from discord.ext.ui import Button, View, ObservableObject, published, Message, ViewTracker, MessageProvider

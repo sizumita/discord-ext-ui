@@ -44,7 +44,7 @@ setup(
     long_description_content_type="text/x-rst",
     packages=['discord.ext.ui', 'discord.ext.ui.combine'],
     license='MIT',
-    description='An Declarative UI Kit for pycord',
+    description='An Declarative UI Kit for discord.py or pycord',
     install_requires=[],
     test_require=test_requires,
     python_requires='>=3.8.2',
