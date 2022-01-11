@@ -25,7 +25,7 @@ discord-ext-ui comes with a declarative View system and Combine system similar t
 This makes it easier to implement architectures such as MVVM and to edit buttons after they have been submitted.
 
 Advantages of adopting discord-ext-ui
------------------------------
+-------------------------------------
 
 1. no more need to explicitly update the message
 
@@ -38,8 +38,6 @@ On the other hand, discord-ext-ui provides wrappers for variables such as `state
 Also, since the function to be executed when the button is pressed can be set declaratively, it is possible to perform complex processing such as for loops. 2.
 
 2. easy to write when a button is used
-
-Button support has been available since discord.py 2.0, but the standard button support mechanism in discord.py has some problems such as difficulty in changing buttons in the middle of the process.
 
 With discord-ext-ui, it is possible to change buttons when updating automatically, so it is easy to implement disabling/enabling according to instance variable values and changing buttons according to internal states such as pagination.
 
