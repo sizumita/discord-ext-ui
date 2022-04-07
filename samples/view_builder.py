@@ -5,7 +5,7 @@ from discord.ext.ui import ViewBuilder, Button
 from discord.ext import commands
 
 
-bot = commands.Bot("!")
+bot = commands.Bot("!", intents=discord.Intents.default())
 
 
 @bot.command()

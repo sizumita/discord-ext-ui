@@ -128,7 +128,7 @@ class MineSweeperView(View):
         return buttons
 
 
-client = discord.Client()
+client = discord.Client(intents=discord.Intents.default())
 
 
 @client.event

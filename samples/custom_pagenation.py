@@ -4,7 +4,7 @@ import discord
 import os
 
 
-client = discord.Client()
+client = discord.Client(intents=discord.Intents.default())
 
 
 class Page(PageView):

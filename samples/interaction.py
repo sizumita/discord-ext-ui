@@ -5,8 +5,7 @@ import discord
 import os
 
 
-bot = discord.Bot()
-bot.register_commands = lambda: None
+bot = discord.Client(intents=discord.Intents.default())
 
 
 class SampleViewModel(ObservableObject):

@@ -43,12 +43,13 @@ class InteractionProvider(BaseProvider):
             followup: discord.Webhook = self.interaction.followup
             self.message = await followup.send(content, embeds=embeds, view=view, wait=True, *self._args, **self._kwargs)
         else:
-            r = await resp.send_message(content, embeds=embeds, view=view, *self._args, **self._kwargs)
-            self.message = r.message
+            await resp.send_message(content, embeds=embeds, view=view, *self._args, **self._kwargs)
+            self.message = await self.interaction.original_message()
         return self.message
 
-    async def edit_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.Message:
+    async def edit_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.InteractionMessage:
         await self.interaction.edit_original_message(content=content, embeds=embeds, view=view)
+        self.message = await self.interaction.original_message()
         return self.message
 
     def update_interaction(self, interaction: discord.Interaction):

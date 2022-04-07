@@ -21,8 +21,6 @@ class ViewTracker(ui.View):
 
     async def track(self, provider: BaseProvider):
         self.body = await self.view.body()
-        while not isinstance(self.body, Message):
-            self.body = await self.body.before_body()
 
         for item in self.body.get_discord_items():
             self.add_item(item)
@@ -46,4 +44,6 @@ class ViewTracker(ui.View):
 
     async def _scheduled_task(self, item: ui.Item, interaction: discord.Interaction):
         self.provider.update_interaction(interaction)
-        return await super(ViewTracker, self)._scheduled_task(item, interaction)
+        await super(ViewTracker, self)._scheduled_task(item, interaction)
+        if not interaction.response.is_done():
+            await interaction.response.defer()

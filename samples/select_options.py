@@ -5,7 +5,7 @@ from discord.ext import commands
 import discord
 import os
 
-bot = commands.Bot("!")
+bot = commands.Bot("!", intents=discord.Intents.default())
 
 
 class SampleView(View):
