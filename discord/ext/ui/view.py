@@ -53,6 +53,7 @@ class View:
 
     def __setattr__(self, key: str, value: Any) -> None:
         if isinstance(value, ObservableObject):
-            value.view = self
+            if value.view is None:
+                value.view = self
 
         object.__setattr__(self, key, value)
