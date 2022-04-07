@@ -6,6 +6,7 @@ from discord import ui
 from discord.utils import MISSING
 
 from .utils import _call_any
+from .modal import Modal
 
 
 class CustomButton(ui.Button):
@@ -16,17 +17,22 @@ class CustomButton(ui.Button):
             disabled: bool = False,
             emoji: Optional[Union[str, discord.PartialEmoji]] = None,
             custom_id: Optional[str] = None,
+            modal_submit: Optional[Modal] = None
     ):
         super().__init__(label=label, style=style, disabled=disabled, emoji=emoji, custom_id=custom_id)
         self.callback_func: Optional[Callable] = None
         self.check_func: Optional[Callable[[discord.Interaction], bool]] = None
+        self.modal_submit = modal_submit
 
     async def callback(self, interaction: discord.Interaction) -> None:
-        if self.callback_func is None:
+        if self.callback_func is None and self.modal_submit is None:
             return
         if self.check_func is not None:
             if not self.check_func(interaction):
                 return
+        if self.modal_submit is not None:
+            await interaction.response.send_modal(self.modal_submit)
+            return
         await _call_any(self.callback_func, interaction)
 
 

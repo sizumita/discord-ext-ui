@@ -10,10 +10,11 @@ from .published import published
 from .select import SelectOption, Select
 from .page import PaginationView, PaginationButtons, PageView
 from .alert import Alert, ActionButton
+from .modal import Modal
 
 
 __title__ = 'discord.ext.ui'
 __author__ = 'sizumita'
 __license__ = 'MIT'
 __copyright__ = 'Copyright 2020-present sizumita'
-__version__ = "3.1.5"
+__version__ = "3.1.6"

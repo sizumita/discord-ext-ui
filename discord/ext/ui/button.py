@@ -7,6 +7,7 @@ from discord import ui
 
 from .item import Item
 from .custom import CustomButton
+from .modal import Modal
 
 
 class LinkButton(Item):
@@ -37,6 +38,7 @@ class Button(Item):
 
         self.callback_func: Optional[Callable[[discord.Interaction], Any]] = None
         self.check_func: Optional[Callable[[discord.Interaction], bool]] = None
+        self.modal_submit: Optional[Modal] = None
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, Button):
@@ -72,6 +74,10 @@ class Button(Item):
         self.callback_func = func
         return self
 
+    def modal(self, modal: Modal) -> Button:
+        self.modal_submit = modal
+        return self
+
     def check(self, func: Callable[[discord.Interaction], bool]) -> Button:
         self.check_func = func
         return self
@@ -82,9 +88,11 @@ class Button(Item):
             self._style,
             self._disabled,
             self._emoji,
-            self._custom_id
+            self._custom_id,
+            modal_submit=self.modal_submit
         )
         button.check_func = self.check_func
         button.callback_func = self.callback_func
         button.row = row
         return button
+
