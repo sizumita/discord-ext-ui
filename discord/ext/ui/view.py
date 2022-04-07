@@ -15,6 +15,7 @@ class View:
     def __init__(self, loop: Optional[asyncio.AbstractEventLoop] = None):
         self._tracker: Optional['ViewTracker'] = None
         self.loop = loop or asyncio.get_event_loop()
+        self._super_view: Optional[View] = None
 
     async def body(self) -> Message | View:
         return Message()\
@@ -47,6 +48,8 @@ class View:
     def update_sync(self):
         if self._tracker is not None:
             self.loop.create_task(self._tracker.update())
+        if self._super_view is not None:
+            self._super_view.update_sync()
 
     def __setattr__(self, key: str, value: Any) -> None:
         if isinstance(value, ObservableObject):
