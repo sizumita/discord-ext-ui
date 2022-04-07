@@ -13,8 +13,9 @@ class Modal(ui.Modal):
 
         self._hook = None
 
-    def hook(self, func: Callable[[discord.Interaction], Any]):
+    def hook(self, func: Callable[[discord.Interaction], Any]) -> Modal:
         self._hook = func
+        return self
 
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if self._hook is not None:
