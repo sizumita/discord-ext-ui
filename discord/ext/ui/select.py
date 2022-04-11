@@ -15,12 +15,14 @@ class Select(Item):
             min_values: int = 1,
             max_values: int = 1,
             options: Optional[list] = None,
+            disabled: bool = False,
             custom_id: Optional[str] = None,
     ) -> None:
         self._placeholder: Optional[str] = placeholder
         self._min_values: int = min_values
         self._max_values: int = max_values
         self._options: list = [] if options is None else options
+        self._disabled: bool = disabled
         self._row: Optional[int] = None
         self._custom_id: Optional[str] = custom_id
 
@@ -41,6 +43,10 @@ class Select(Item):
 
     def options(self, options: list[SelectOption]) -> 'Select':
         self._options = [op.to_discord_select_option() for op in options]
+        return self
+    
+    def disabled(self, disabled: bool = False) -> 'Select':
+        self._disabled = disabled
         return self
 
     def row(self, row: int) -> 'Select':
@@ -67,6 +73,7 @@ class Select(Item):
             min_values=self._min_values,
             max_values=self._max_values,
             options=self._options,
+            disabled=self._disabled,
             row=row,
             callback=self.func,
             check_func=self.check_func,
