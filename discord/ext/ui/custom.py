@@ -45,6 +45,7 @@ class CustomSelect(ui.Select):
             min_values: int = 1,
             max_values: int = 1,
             options: Optional[list[discord.SelectOption]],
+            disabled: bool = False,
             row: Optional[int] = None,
             callback: Optional[Callable] = None,
             check_func: Callable[[discord.Interaction], bool]
@@ -57,6 +58,7 @@ class CustomSelect(ui.Select):
             min_values=min_values,
             max_values=max_values,
             options=options,
+            disabled=disabled,
             row=row
         )
         self.callback_func = callback
