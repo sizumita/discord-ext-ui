@@ -31,9 +31,12 @@ class CustomButton(ui.Button):
             if not self.check_func(interaction):
                 return
         if self.modal_submit is not None:
+            self.modal_submit.view = self.view
             await interaction.response.send_modal(self.modal_submit)
             return
         await _call_any(self.callback_func, interaction)
+        if self.view.sync:
+            await self.view.update()
 
 
 class CustomSelect(ui.Select):
@@ -77,3 +80,5 @@ class CustomSelect(ui.Select):
                     selected_options.append(option)
                     continue
         await _call_any(self.callback_func, interaction, selected_options)
+        if self.view.sync:
+            await self.view.update()

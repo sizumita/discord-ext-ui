@@ -11,9 +11,10 @@ from .message import Message
 
 
 class ViewTracker(ui.View):
-    def __init__(self, view: View, timeout: Optional[float] = 180.0):
+    def __init__(self, view: View, timeout: Optional[float] = 180.0, sync: bool = False):
         super().__init__(timeout=timeout)
         self.view: View = view
+        self.sync: bool = sync
         self.items: dict[str, str] = {}
         self.body: Optional[Message] = None
         self.message: Optional[discord.Message] = None

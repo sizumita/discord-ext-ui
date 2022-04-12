@@ -13,6 +13,7 @@ class Modal(ui.Modal):
         for component in components:
             self.add_item(component)
 
+        self.view = None
         self._hook = None
 
     def hook(self, func: Callable[[discord.Interaction], Any]) -> Modal:
@@ -22,5 +23,7 @@ class Modal(ui.Modal):
     async def on_submit(self, interaction: discord.Interaction) -> None:
         if self._hook is not None:
             await _call_any(self._hook, interaction)
+        if self.view.sync:
+            await self.view.update()
         if not interaction.response.is_done():
             await interaction.response.defer()
