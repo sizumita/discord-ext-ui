@@ -2,7 +2,7 @@ import dataclasses
 import itertools
 import os
 from typing import List
-from enum import Enum, auto
+from enum import auto
 
 import discord
 import numpy as np

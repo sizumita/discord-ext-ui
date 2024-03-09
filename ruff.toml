@@ -1,0 +1,4 @@
+line-length = 160
+
+[lint]
+extend-select = ["E501"]

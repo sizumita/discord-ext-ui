@@ -20,7 +20,7 @@ class SampleView(View):
 
     async def body(self):
         return Message(
-            f"select your favorite animals!",
+            "select your favorite animals!",
             components=[
                 [
                     Select()

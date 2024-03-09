@@ -1,0 +1,10 @@
+[version]
+path = "discord/ext/ui/__init__.py"
+
+[build.targets.sdist]
+include = [
+    "/discord",
+]
+
+[build.targets.wheel]
+packages = ["src/discord/ext/ui"]
