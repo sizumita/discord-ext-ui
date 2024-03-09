@@ -11,13 +11,13 @@ from .modal import Modal
 
 class CustomButton(ui.Button):
     def __init__(
-            self,
-            label: str = "",
-            style: discord.ButtonStyle = discord.ButtonStyle.primary,
-            disabled: bool = False,
-            emoji: Optional[Union[str, discord.PartialEmoji]] = None,
-            custom_id: Optional[str] = None,
-            modal_submit: Optional[Modal] = None
+        self,
+        label: str = "",
+        style: discord.ButtonStyle = discord.ButtonStyle.primary,
+        disabled: bool = False,
+        emoji: Optional[Union[str, discord.PartialEmoji]] = None,
+        custom_id: Optional[str] = None,
+        modal_submit: Optional[Modal] = None,
     ):
         super().__init__(label=label, style=style, disabled=disabled, emoji=emoji, custom_id=custom_id)
         self.callback_func: Optional[Callable] = None
@@ -38,28 +38,22 @@ class CustomButton(ui.Button):
 
 class CustomSelect(ui.Select):
     def __init__(
-            self,
-            *,
-            custom_id: Optional[str],
-            placeholder: Optional[str] = None,
-            min_values: int = 1,
-            max_values: int = 1,
-            options: Optional[list[discord.SelectOption]],
-            disabled: bool = False,
-            row: Optional[int] = None,
-            callback: Optional[Callable] = None,
-            check_func: Callable[[discord.Interaction], bool]
+        self,
+        *,
+        custom_id: Optional[str],
+        placeholder: Optional[str] = None,
+        min_values: int = 1,
+        max_values: int = 1,
+        options: Optional[list[discord.SelectOption]],
+        disabled: bool = False,
+        row: Optional[int] = None,
+        callback: Optional[Callable] = None,
+        check_func: Callable[[discord.Interaction], bool],
     ) -> None:
         custom_id = custom_id or MISSING
         options = options or MISSING
         super(CustomSelect, self).__init__(
-            custom_id=custom_id,
-            placeholder=placeholder,
-            min_values=min_values,
-            max_values=max_values,
-            options=options,
-            disabled=disabled,
-            row=row
+            custom_id=custom_id, placeholder=placeholder, min_values=min_values, max_values=max_values, options=options, disabled=disabled, row=row
         )
         self.callback_func = callback
         self.check_func = check_func

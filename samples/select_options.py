@@ -24,15 +24,11 @@ class SampleView(View):
             components=[
                 [
                     Select()
-                        .options([
-                        SelectOption("dog"),
-                        SelectOption("cat"),
-                        SelectOption("elephant"),
-                        SelectOption("dug")
-                    ]).on_select(self.select_animal)
-                        .max_values(4)
+                    .options([SelectOption("dog"), SelectOption("cat"), SelectOption("elephant"), SelectOption("dug")])
+                    .on_select(self.select_animal)
+                    .max_values(4)
                 ]
-            ]
+            ],
         )
 
 

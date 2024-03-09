@@ -13,9 +13,7 @@ discord-ext-ui
 
 This package is an extension of discord.ui.
 
-You can use pycord or discord.py.
-
-I hate pycord's slash command system.
+You can use discord.py.
 
 why use discord-ext-ui?
 =============================

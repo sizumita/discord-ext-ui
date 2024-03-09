@@ -19,14 +19,7 @@ class SampleView(View):
         self.stop()
 
     async def body(self):
-        return Message(
-            components=[
-                Button("show modal")
-                .modal(Modal("test", [
-                    TextInput(label="test dayo", default="hello!")
-                ]))
-            ]
-        )
+        return Message(components=[Button("show modal").modal(Modal("test", [TextInput(label="test dayo", default="hello!")]))])
 
 
 @client.event

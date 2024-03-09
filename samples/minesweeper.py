@@ -88,16 +88,14 @@ class ViewModel(ObservableObject):
             if r_ == c_ == 0:
                 continue
 
-            t[max(0, r_):min(r, r+r_), max(0, c_):min(c, c+c_)] -= board[max(0, -r_):min(r, r-r_), max(0, -c_):min(c, c-c_)]
+            t[max(0, r_) : min(r, r + r_), max(0, c_) : min(c, c + c_)] -= board[max(0, -r_) : min(r, r - r_), max(0, -c_) : min(c, c - c_)]
 
         t[board == -1] = -1
         board = t
 
         for y, values in enumerate(board):
             for value in values:
-                self.board[y].append(
-                    Mass(value == -1, value, False)
-                )
+                self.board[y].append(Mass(value == -1, value, False))
 
 
 class MineSweeperView(View):
@@ -121,9 +119,7 @@ class MineSweeperView(View):
                 buttons[y].append(
                     Button(mass.get_label() if self.viewModel.status == GameStatus.Opening else mass.get_real_label())
                     .style(mass.get_style())
-                    .on_click(
-                        async_interaction_partial(self.viewModel.mass_opened, x, y) if not mass.opened else lambda _: None
-                    )
+                    .on_click(async_interaction_partial(self.viewModel.mass_opened, x, y) if not mass.opened else lambda _: None)
                 )
         return buttons
 
@@ -136,5 +132,6 @@ async def on_message(message: discord.Message):
     if message.content == "!minesweeper":
         view_tracker = ViewTracker(MineSweeperView())
         await view_tracker.track(MessageProvider(message.channel))
+
 
 client.run(os.environ["DISCORD_BOT_TOKEN"])

@@ -13,15 +13,17 @@ if TYPE_CHECKING:
 
 class View:
     def __init__(self, loop: Optional[asyncio.AbstractEventLoop] = None):
-        self._tracker: Optional['ViewTracker'] = None
+        self._tracker: Optional["ViewTracker"] = None
         self.loop = loop or asyncio.get_event_loop()
         self._super_view: Optional[View] = None
 
     async def body(self) -> Message | View:
-        return Message()\
-            .content("Hello World!\n\ncreated by discord-ext-ui from @sizumita")\
-            .item(LinkButton("https://twitter.com/sizumita", "Twitter @sizumita"))\
+        return (
+            Message()
+            .content("Hello World!\n\ncreated by discord-ext-ui from @sizumita")
+            .item(LinkButton("https://twitter.com/sizumita", "Twitter @sizumita"))
             .item(LinkButton("https://github.com/sizumita/discord-ext-ui", "Github discord-ext-ui"))
+        )
 
     async def on_appear(self) -> None:
         """

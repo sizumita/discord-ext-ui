@@ -23,12 +23,12 @@ class LinkButton(Item):
 
 class Button(Item):
     def __init__(
-            self,
-            label: str = "",
-            style: discord.ButtonStyle = discord.ButtonStyle.primary,
-            disabled: bool = False,
-            emoji: Optional[Union[str, discord.PartialEmoji]] = None,
-            custom_id: Optional[str] = None,
+        self,
+        label: str = "",
+        style: discord.ButtonStyle = discord.ButtonStyle.primary,
+        disabled: bool = False,
+        emoji: Optional[Union[str, discord.PartialEmoji]] = None,
+        custom_id: Optional[str] = None,
     ):
         self._style: discord.ButtonStyle = style
         self._label: str = label
@@ -44,11 +44,13 @@ class Button(Item):
         if not isinstance(other, Button):
             return NotImplemented
 
-        return self._label == other._label\
-            and self._style == other._style\
-            and self._disabled == other._disabled\
-            and self._emoji == other._emoji\
+        return (
+            self._label == other._label
+            and self._style == other._style
+            and self._disabled == other._disabled
+            and self._emoji == other._emoji
             and self._custom_id == other._custom_id
+        )
 
     def style(self, style: discord.ButtonStyle) -> Button:
         self._style = style
@@ -83,16 +85,8 @@ class Button(Item):
         return self
 
     def to_discord_item(self, row: Optional[int]) -> ui.Item:
-        button = CustomButton(
-            self._label,
-            self._style,
-            self._disabled,
-            self._emoji,
-            self._custom_id,
-            modal_submit=self.modal_submit
-        )
+        button = CustomButton(self._label, self._style, self._disabled, self._emoji, self._custom_id, modal_submit=self.modal_submit)
         button.check_func = self.check_func
         button.callback_func = self.callback_func
         button.row = row
         return button
-

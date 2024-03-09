@@ -8,11 +8,7 @@ from .item import Item
 
 
 class Message:
-    def __init__(
-            self,
-            content: str = "",
-            embeds: list[discord.Embed] = None,
-            components: list[Union[list[Item], Item]] = None):
+    def __init__(self, content: str = "", embeds: list[discord.Embed] = None, components: list[Union[list[Item], Item]] = None):
         self._content = content
         self._embeds: list[discord.Embed] = embeds or []
         self._components: list[Union[list[Item], Item]] = components or []
@@ -51,6 +47,4 @@ class Message:
         return items
 
     def __eq__(self, other: Message) -> bool:
-        return self._components == other._components\
-               and self._embeds == other._embeds\
-               and self._content == other._content
+        return self._components == other._components and self._embeds == other._embeds and self._content == other._content

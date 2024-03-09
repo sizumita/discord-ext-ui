@@ -3,7 +3,7 @@ from typing import Any, TypeVar
 
 from .observable_object import ObservableObject
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 def published(name: str):

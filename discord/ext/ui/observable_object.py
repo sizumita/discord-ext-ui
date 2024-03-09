@@ -8,7 +8,7 @@ if TYPE_CHECKING:
 class ObservableObject:
     def __init__(self) -> None:
         self._watch_variables: List[str] = []
-        self.view: Optional['View'] = None
+        self.view: Optional["View"] = None
 
     def notify(self) -> None:
         """

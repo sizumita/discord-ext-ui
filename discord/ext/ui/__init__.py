@@ -1,4 +1,4 @@
-# flake8: noqa
+# ruff: noqa: F401
 from .view import View
 from .tracker import ViewTracker
 from .provider import MessageProvider, InteractionProvider
@@ -13,8 +13,8 @@ from .alert import Alert, ActionButton
 from .modal import Modal
 
 
-__title__ = 'discord.ext.ui'
-__author__ = 'sizumita'
-__license__ = 'MIT'
-__copyright__ = 'Copyright 2020-present sizumita'
-__version__ = "3.1.9"
+__title__ = "discord.ext.ui"
+__author__ = "sizumita"
+__license__ = "MIT"
+__copyright__ = "Copyright 2020-present sizumita"
+__version__ = "4.0.0a"

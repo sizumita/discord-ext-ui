@@ -11,7 +11,7 @@ client = discord.Client(intents=intents)
 
 
 class SampleViewModel(ObservableObject):
-    num = published('num')
+    num = published("num")
 
     def __init__(self):
         super().__init__()
@@ -33,24 +33,19 @@ class View2(View):
         self.stop()
 
     async def body(self):
-        return Message()\
-            .content(f"test! {self.viewModel.num}")\
-            .items([
-            [
-                Button("+1")
-                    .on_click(lambda _: self.viewModel.sub.send(1))
-                    .style(discord.ButtonStyle.blurple),
-
-                Button("-1")
-                    .on_click(lambda _: self.viewModel.sub.send(-1))
-                    .style(discord.ButtonStyle.blurple)
-            ],
-            [
-                Button("終わる")
-                    .on_click(self.delete)
-                    .style(discord.ButtonStyle.danger)
-            ]
-        ])
+        return (
+            Message()
+            .content(f"test! {self.viewModel.num}")
+            .items(
+                [
+                    [
+                        Button("+1").on_click(lambda _: self.viewModel.sub.send(1)).style(discord.ButtonStyle.blurple),
+                        Button("-1").on_click(lambda _: self.viewModel.sub.send(-1)).style(discord.ButtonStyle.blurple),
+                    ],
+                    [Button("終わる").on_click(self.delete).style(discord.ButtonStyle.danger)],
+                ]
+            )
+        )
 
 
 class SampleView(View):

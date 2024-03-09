@@ -1,7 +1,7 @@
 from discord.ext.ui.combine import Just, PassThroughSubject
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sub = PassThroughSubject()
     sub.map(lambda x: x * 5).sink(print)
     sub.send(1)
@@ -11,5 +11,5 @@ if __name__ == '__main__':
     sub.send(3)
     # 15
 
-    Just([1, 2, 3]).map(lambda x: x ** 2).sink(print)
+    Just([1, 2, 3]).map(lambda x: x**2).sink(print)
     # [1, 4, 9]

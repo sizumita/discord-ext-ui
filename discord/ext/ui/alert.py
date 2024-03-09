@@ -36,9 +36,7 @@ class Alert(View):
 
     async def body(self) -> Message | View:
         self._set_func()
-        return Message(embeds=[
-            discord.Embed(title=self.title, description=self.text, colour=discord.Colour.blurple())
-        ], components=self.buttons)
+        return Message(embeds=[discord.Embed(title=self.title, description=self.text, colour=discord.Colour.blurple())], components=self.buttons)
 
     async def wait_for_click(self, interaction: discord.Interaction, timeout: float | None = 180.0):
         tracker = ViewTracker(self, timeout)

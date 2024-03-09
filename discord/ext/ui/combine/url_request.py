@@ -21,5 +21,6 @@ class URLRequestPublisher(AsyncPublisher):
     def json(self, *args, **kwargs) -> URLRequestPublisher:
         async def _json(resp: aiohttp.ClientResponse) -> dict:
             return await resp.json(*args, **kwargs)
+
         self.map(_json)
         return self

@@ -26,13 +26,15 @@ async def on_message(message: discord.Message):
     if message.content != "!test":
         return
 
-    view = PaginationView([
-        Page("The first page -- Morning --"),
-        Page("The second page -- Noon --"),
-        Page("The third page -- Afternoon --"),
-        Page("The forth page -- Evening --"),
-        Page("The last page -- Good night! --"),
-    ])
+    view = PaginationView(
+        [
+            Page("The first page -- Morning --"),
+            Page("The second page -- Noon --"),
+            Page("The third page -- Afternoon --"),
+            Page("The forth page -- Evening --"),
+            Page("The last page -- Good night! --"),
+        ]
+    )
     tracker = ViewTracker(view, timeout=None)
     await tracker.track(MessageProvider(message.channel))
 

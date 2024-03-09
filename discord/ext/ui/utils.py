@@ -14,6 +14,7 @@ async def _call_any(func: Callable, *args: Any, **kwargs: Any) -> Any:
 def async_interaction_partial(func: Callable, *args: Any, **kwargs: Any) -> Callable:
     async def callback(interaction: discord.Interaction) -> Any:
         return await func(interaction, *args, **kwargs)
+
     return callback
 
 

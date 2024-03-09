@@ -30,20 +30,20 @@ class PaginationView(View):
     page = state("page")
 
     def __init__(
-            self,
-            views: list[PageView] | PageView,
-            *,
-            show_buttons: bool = True,
-            show_disabled: bool = False,
-            show_indicator: bool = True,
-            check: Optional[Callable[[discord.Interaction], bool]] = None,
-            first_page: int = 0,
-            cls: Type[PaginationButtons] = PaginationButtons
+        self,
+        views: list[PageView] | PageView,
+        *,
+        show_buttons: bool = True,
+        show_disabled: bool = False,
+        show_indicator: bool = True,
+        check: Optional[Callable[[discord.Interaction], bool]] = None,
+        first_page: int = 0,
+        cls: Type[PaginationButtons] = PaginationButtons,
     ):
         super(PaginationView, self).__init__()
         self._views = views
         self.show_buttons = show_buttons
-        self.show_disabled = show_disabled,
+        self.show_disabled = (show_disabled,)
         self.show_indicator = show_indicator
         self.check = check
 

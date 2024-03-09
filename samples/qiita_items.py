@@ -26,8 +26,7 @@ class ArticleRequest(ArticleProtocol):
     base_path = "/api/v2"
 
     def fetch(self) -> AsyncPublisher:
-        return URLRequestPublisher(self.api_components("/items"))\
-            .json()
+        return URLRequestPublisher(self.api_components("/items")).json()
 
     def api_components(self, path: str) -> str:
         return f"{self.scheme}://{self.host}{self.base_path}{path}"
@@ -44,8 +43,7 @@ class ViewModel(ObservableObject):
         self._article_request = ArticleRequest()
 
     async def fetch_articles(self):
-        await self._article_request.fetch()\
-            .sink(lambda x: self.articles.extend(x))
+        await self._article_request.fetch().sink(lambda x: self.articles.extend(x))
         self.is_loading = False
 
 
@@ -60,14 +58,7 @@ class SampleView(View):
         if not self.view_model.articles:
             return Message("No results")
         return Message(
-            embeds=[
-                discord.Embed(
-                    title="Qiita articles",
-                    description="\n\n".join(
-                        [f'[{x["title"]}]({x["url"]})' for x in self.view_model.articles]
-                    )
-                )
-            ]
+            embeds=[discord.Embed(title="Qiita articles", description="\n\n".join([f'[{x["title"]}]({x["url"]})' for x in self.view_model.articles]))]
         )
 
     async def on_appear(self) -> None:

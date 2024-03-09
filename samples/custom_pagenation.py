@@ -30,19 +30,17 @@ async def on_message(message: discord.Message):
     if message.content != "!test":
         return
 
-    view = PaginationView([
-        Page("The first page -- Morning --",
-             LinkButton("https://www.google.co.jp/search?q=朝早く起きる方法", "Search for 朝早く起きる方法")
-             ),
-        Page("The second page -- Noon --",
-             LinkButton("https://www.google.co.jp/search?q=昼ごはん", "Search for 昼ごはん")),
-        Page("The third page -- Afternoon --",
-             LinkButton("https://www.google.co.jp/search?q=午後の紅茶", "Search for 午後の紅茶")),
-        Page("The forth page -- Evening --",
-             LinkButton("https://www.google.co.jp/search?q=イタリアンバル", "Search for イタリアンバル")),
-        Page("The last page -- Good night! --",
-             LinkButton("https://www.google.co.jp/search?q=寝つきを良くする方法", "Search for 寝つきを良くする方法")),
-    ], show_indicator=False, cls=CustomButtons)
+    view = PaginationView(
+        [
+            Page("The first page -- Morning --", LinkButton("https://www.google.co.jp/search?q=朝早く起きる方法", "Search for 朝早く起きる方法")),
+            Page("The second page -- Noon --", LinkButton("https://www.google.co.jp/search?q=昼ごはん", "Search for 昼ごはん")),
+            Page("The third page -- Afternoon --", LinkButton("https://www.google.co.jp/search?q=午後の紅茶", "Search for 午後の紅茶")),
+            Page("The forth page -- Evening --", LinkButton("https://www.google.co.jp/search?q=イタリアンバル", "Search for イタリアンバル")),
+            Page("The last page -- Good night! --", LinkButton("https://www.google.co.jp/search?q=寝つきを良くする方法", "Search for 寝つきを良くする方法")),
+        ],
+        show_indicator=False,
+        cls=CustomButtons,
+    )
     tracker = ViewTracker(view, timeout=None)
     await tracker.track(MessageProvider(message.channel))
 
