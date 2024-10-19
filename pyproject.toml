@@ -8,7 +8,7 @@ dynamic = ["version"]
 description = "An Declarative UI Kit for discord.py"
 readme = "README.rst"
 license = "MIT"
-requires-python = ">=3.8.2"
+requires-python = ">=3.12.2"
 authors = [
     { name = "sizumita", email = "github@smdr.io" },
 ]
@@ -18,8 +18,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Natural Language :: Japanese",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.12",
     "Topic :: Internet",
     "Topic :: Software Development :: Libraries",
     "Topic :: Software Development :: Libraries :: Python Modules",
@@ -27,6 +26,7 @@ classifiers = [
 ]
 dependencies = [
     "aiohttp>=3.9.3",
+    "discord.py>=2.3.2",
 ]
 
 [project.urls]
@@ -36,10 +36,18 @@ Homepage = "https://github.com/sizumita/discord-ext-ui"
 managed = true
 dev-dependencies = [
     "ruff>=0.3.2",
-    "discord.py>=2.3.2",
+    "pytest>=8.1.1",
+    "mypy>=1.9.0",
+    "pytest-asyncio>=0.23.5.post1",
 ]
 
 [tool.rye.scripts]
-check = { cmd = "ruff check ." }
-format = { cmd = "ruff format ." }
-build = { cmd = "hatch build" }
+check = { chain = ["check:ruff", "check:mypy"] }
+"check:ruff" = "ruff check ."
+"check:mypy" = "mypy . --explicit-package-bases --check-untyped-defs --python-version=3.12"
+setup_path = { cmd = "ln -s discord/ext/ui/ .venv/lib/python3.12/site-packages/discord/ext/ui" }
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "discord"
+]

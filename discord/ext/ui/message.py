@@ -1,50 +1,45 @@
 from __future__ import annotations
-from typing import Union
-
+from typing import Optional, Generic, TypeVar, TYPE_CHECKING, Any
 import discord
-from discord import ui
 
-from .item import Item
+from .provider import ContextProvider
+from .signal import Signal
+from .fake import FakeView
+
+if TYPE_CHECKING:
+    from .abc import ViewElement
+    from .context import Context
 
 
-class Message:
-    def __init__(self, content: str = "", embeds: list[discord.Embed] = None, components: list[Union[list[Item], Item]] = None):
-        self._content = content
-        self._embeds: list[discord.Embed] = embeds or []
-        self._components: list[Union[list[Item], Item]] = components or []
+S = TypeVar("S", bound=Signal, covariant=True)
+P = TypeVar("P", bound=ContextProvider, covariant=True)
 
-    def content(self, content: str) -> Message:
-        self._content = content
-        return self
 
-    def embed(self, embed: discord.Embed) -> Message:
-        self._embeds.append(embed)
-        return self
+class ViewMessage(Generic[S, P]):
+    def __init__(
+            self,
+            *,
+            content: Optional[str] = None,
+            embeds: Optional[list[discord.Embed]] = None,
+            allowed_mentions: Optional[discord.AllowedMentions] = None,
+            elements: Optional[list[list[ViewElement[S, P, Any]]]] = None
+    ) -> None:
+        self.content = content
+        self.embeds = embeds
+        self.allowed_mentions = allowed_mentions
+        self.elements = elements
 
-    def embeds(self, embeds: list[discord.Embed]) -> Message:
-        self._embeds.extend(embeds)
-        return self
+    def get_discord_ui_view(self, context: Context[P]) -> Optional[discord.ui.View]:
+        """
+        elementsがある場合はViewを返す
+        """
+        if len(self.elements or []) == 0:
+            return None
+        view = FakeView()
+        items: list[discord.ui.Item] = []
+        for (nth, row) in enumerate(self.elements or []):
+            for element in row:
+                items.append(element.to_ui_item(view, context, nth+1))
+        view.set_items(items)
 
-    def item(self, item: Union[list[Item], Item]) -> Message:
-        self._components.append(item)
-        return self
-
-    def items(self, items: list[Union[list[Item], Item]]) -> Message:
-        self._components.extend(items)
-        return self
-
-    def get_discord_items(self) -> list[ui.Item]:
-        row = 0
-        items = []
-        for component in self._components:
-            if isinstance(component, list):
-                for sub_component in component:  # type: Item
-                    items.append(sub_component.to_discord_item(row))
-                row += 1
-            else:
-                items.append(component.to_discord_item(None))
-
-        return items
-
-    def __eq__(self, other: Message) -> bool:
-        return self._components == other._components and self._embeds == other._embeds and self._content == other._content
+        return view

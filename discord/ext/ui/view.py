@@ -1,61 +1,55 @@
-from __future__ import annotations
-
+import abc
 import asyncio
-from typing import Optional, TYPE_CHECKING, Any
+import traceback
+from typing import TypeVar, Optional
 
-from .message import Message
-from .button import LinkButton
-from .observable_object import ObservableObject
-
-if TYPE_CHECKING:
-    from .tracker import ViewTracker
+from .context import Context
+from .provider import ContextProvider
+from .abc import Displayable, Observable, Renderer
+from .signal import Signal
 
 
-class View:
-    def __init__(self, loop: Optional[asyncio.AbstractEventLoop] = None):
-        self._tracker: Optional["ViewTracker"] = None
-        self.loop = loop or asyncio.get_event_loop()
-        self._super_view: Optional[View] = None
+S = TypeVar("S", bound=Signal, covariant=True)
+P = TypeVar("P", bound=ContextProvider, covariant=True)
 
-    async def body(self) -> Message | View:
-        return (
-            Message()
-            .content("Hello World!\n\ncreated by discord-ext-ui from @sizumita")
-            .item(LinkButton("https://twitter.com/sizumita", "Twitter @sizumita"))
-            .item(LinkButton("https://github.com/sizumita/discord-ext-ui", "Github discord-ext-ui"))
-        )
 
-    async def on_appear(self) -> None:
-        """
-        Viewが送信された際に実行されます。
-        """
-        pass
+class View(Displayable[S, P], Observable, Renderer[P], abc.ABC):
+    def __init__(self) -> None:
+        self.event_waiter = asyncio.Event()
+        self.is_state_updated = False
+        self.is_appear = False
 
-    async def on_disappear(self) -> None:
-        """
-        Viewがstopされた際に送信されます。
-        """
-        pass
+    async def appear(self, ctx: Context[P]) -> S:
+        # TODO: scopeを次に進める？これはcheckpointでやるべきかもしれない
+        msg = await self.render(ctx)
 
-    async def on_update(self) -> None:
-        """
-        Viewが更新された際に送信されます。
-        """
-        pass
+        await ctx.render(msg)
 
-    def stop(self):
-        self._tracker.stop()
-        self.loop.create_task(self.on_disappear())
+        self.is_appear = True
+        event_loop = asyncio.create_task(self._start_event_loop(ctx))
+        signal: S = await ctx.scope.signal_queue.get()
+        event_loop.cancel()
+        if ctx.scope.view is not None:
+            ctx.provider.stop_view(ctx.scope.view)
 
-    def update_sync(self):
-        if self._tracker is not None:
-            self.loop.create_task(self._tracker.update())
-        if self._super_view is not None:
-            self._super_view.update_sync()
+        self.is_appear = False
 
-    def __setattr__(self, key: str, value: Any) -> None:
-        if isinstance(value, ObservableObject):
-            if value.view is None:
-                value.view = self
+        return signal
 
-        object.__setattr__(self, key, value)
+    async def _start_event_loop(self, ctx: Context[P]) -> None:
+        try:
+            while True:
+                await self.event_waiter.wait()
+
+                msg = await self.render(ctx)
+                await ctx.render(msg)
+                print(self.event_waiter.is_set())
+                self.event_waiter.clear()
+                print(self.event_waiter.is_set())
+                await asyncio.sleep(1)
+        except Exception as e:
+            traceback.print_exception(e)
+
+    def update(self, name: str):
+        if self.is_appear:
+            self.event_waiter.set()

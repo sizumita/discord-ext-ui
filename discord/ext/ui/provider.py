@@ -1,56 +1,80 @@
 from __future__ import annotations
-from typing import Optional
+from abc import abstractmethod
+from enum import Enum
+from typing import TYPE_CHECKING, TypeVar, Generic, Optional, cast
 
 import discord
-from discord import ui
+
+from .abc import MessageId
+
+if TYPE_CHECKING:
+    from .message import ViewMessage
 
 
-class BaseProvider:
-    async def send_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.Message:
-        pass
-
-    async def edit_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.Message:
-        pass
-
-    def update_interaction(self, interaction: discord.Interaction):
-        pass
+Id = TypeVar("Id", bound=MessageId)
 
 
-class MessageProvider(BaseProvider):
-    def __init__(self, channel: discord.TextChannel) -> None:
+class ContextProvider(Generic[Id]):
+    @abstractmethod
+    async def send_new_message(self, message: ViewMessage, view: Optional[discord.ui.View]) -> Id:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def send_lower_message(self, message: ViewMessage, view: Optional[discord.ui.View]) -> Id:
+        raise NotImplementedError()
+
+    @abstractmethod
+    def stop_view(self, view: discord.ui.View) -> None:
+        raise NotImplementedError()
+
+    @abstractmethod
+    async def update_message(self, message_id: Id, message: ViewMessage, view: Optional[discord.ui.View]) -> None:
+        raise NotImplementedError()
+
+
+class DiscordMessageIdType(Enum):
+    Message = 1
+    Interaction = 2
+
+
+class DiscordMessageId(MessageId):
+    def __init__(self, typ: DiscordMessageIdType, *, message: Optional[discord.Message] = None, interaction: Optional[discord.Interaction] = None):
+        self.type = typ
+        self.message = message
+        self.interaction = interaction
+
+
+class DiscordProvider(ContextProvider[DiscordMessageId]):
+    def __init__(self, client: discord.Client, channel: discord.abc.Messageable):
         self.channel = channel
-        self.message: Optional[discord.Message] = None
+        self.client = client
 
-    async def send_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.Message:
-        self.message = await self.channel.send(content, embeds=embeds, view=view)
-        return self.message
+    async def send_new_message(self, message: ViewMessage, view: Optional[discord.ui.View]) -> DiscordMessageId:
+        msg = await self.channel.send(
+            content=message.content,
+            embeds=message.embeds,
+            view=view
+        )
+        return DiscordMessageId(DiscordMessageIdType.Message, message=msg)
 
-    async def edit_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.Message:
-        await self.message.edit(content=content, embeds=embeds, view=view)
-        return self.message
+    async def send_lower_message(self, message: ViewMessage, view: Optional[discord.ui.View]) -> Id:
+        raise NotImplementedError()
 
+    def stop_view(self, view: discord.ui.View) -> None:
+        pass
+        # view.stop()
+        # self.client._connection._view_store.remove_view(view)
 
-class InteractionProvider(BaseProvider):
-    def __init__(self, interaction: discord.Interaction, *args, **kwargs) -> None:
-        self.interaction = interaction
-        self.message: Optional[discord.Message] = None
-        self._args = args
-        self._kwargs = kwargs
-
-    async def send_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.Message:
-        resp: discord.InteractionResponse = self.interaction.response
-        if resp._responded:
-            followup: discord.Webhook = self.interaction.followup
-            self.message = await followup.send(content, embeds=embeds, view=view, wait=True, *self._args, **self._kwargs)
-        else:
-            await resp.send_message(content, embeds=embeds, view=view, *self._args, **self._kwargs)
-            self.message = await self.interaction.original_message()
-        return self.message
-
-    async def edit_message(self, content: Optional[str], embeds: list[discord.Embed], view: ui.View) -> discord.InteractionMessage:
-        await self.interaction.edit_original_message(content=content, embeds=embeds, view=view)
-        self.message = await self.interaction.original_message()
-        return self.message
-
-    def update_interaction(self, interaction: discord.Interaction):
-        self.interaction = interaction
+    async def update_message(self, message_id: DiscordMessageId, message: ViewMessage, view: Optional[discord.ui.View]) -> None:
+        if message_id.type == DiscordMessageIdType.Message:
+            print("editing")
+            print(message_id.message)
+            print(view)
+            new_msg = await cast(discord.Message, message_id.message).edit(
+                content=message.content,
+                embeds=message.embeds or [],
+                allowed_mentions=message.allowed_mentions,
+                view=view,
+            )
+        elif message_id.type == DiscordMessageIdType.Interaction:
+            raise NotImplementedError()
